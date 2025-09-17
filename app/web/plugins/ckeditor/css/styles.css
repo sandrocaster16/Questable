@@ -1,0 +1,42 @@
+.classicEditorAdminContainer .ck.ck-toolbar {
+    border-top: none;
+    border-bottom: none;
+    border-radius: 0 !important;
+}
+
+.classicEditorAdminContainer .ck.ck-menu-bar {
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.classicEditorAdminContainer .ck.ck-button .ck-button__label {
+    text-align: left;
+}
+
+.classicEditorAdminContainer .ck.ck-button.ck-button_with-keystroke .ck-button__label,
+.classicEditorAdminContainer .ck.ck-menu-bar__menu>.ck-menu-bar__menu__button>.ck-button__label {
+    padding-left: 1rem;
+}
+
+.ck.ck-menu-bar__menu:not(.ck-menu-bar__menu_top-level) .ck-menu-bar__menu__button:not(:has(.ck-button__icon))>.ck-button__label {
+    padding-left: 1rem;
+}
+
+.classicEditorAdminContainer .ck.ck-menu-bar__menu.ck-menu-bar__menu_top-level>.ck-menu-bar__menu__button .ck-button__label {
+    padding-left: 0;
+}
+
+.classicEditorAdminContainer .ck.ck-button.ck-source-editing-button {
+    gap: 0.5rem;
+}
+
+.classicEditorAdminContainer .ck.ck-dropdown.ck-heading-dropdown .ck-dropdown__button .ck-button__label {
+    width: 6rem;
+}
+
+.classicEditorAdminContainer .ck.ck-splitbutton:hover>.ck-splitbutton__arrow:not(.ck-disabled):after {
+    display: none;
+}
+
+.classicEditorAdminContainer .ck-content {
+    min-height: 10px;
+}
