@@ -1,0 +1,53 @@
+CREATE TABLE `quests.users` (
+  `id` int,
+  `user_id` int,
+  `quest_id` int,
+  `role` enum (player/owner/volunteer),
+  `command_id` int,
+  `points` int,
+  `banned` null / datetime,
+  `created_at` datetime
+);
+
+CREATE TABLE `users` (
+  `id` int,
+  `tg_id` int,
+  `role` enum (root/admin/user),
+  `created_at` datetime,
+  `deleted_at` null / datetime,
+  `banned` null / datetime,
+  FOREIGN KEY (`id`)
+      REFERENCES `quests.users`(`user_id`)
+);
+
+CREATE TABLE `quests.questions` (
+  `id` int,
+  `station_id` int,
+  `question` varchar (2048),
+  `answer` json,
+  `help` null / varchar (2048),
+  `message` null / varchar (2048),
+  `created_at` datetime,
+  `deleted_at` null / datetime
+);
+
+CREATE TABLE `quests.stations` (
+  `id` int,
+  `quest_id` int,
+  `name` varchar (255),
+  `created_at` datetime,
+  `deleted_at` null / datetime,
+  FOREIGN KEY (`id`)
+      REFERENCES `quests.questions`(`station_id`)
+);
+
+CREATE TABLE `quests` (
+  `id` int,
+  `name` varchar (255),
+  `created_at` datetime,
+  `delete_at` null / datetime,
+  FOREIGN KEY (`id`)
+      REFERENCES `quests.stations`(`quest_id`),
+  FOREIGN KEY (`id`)
+      REFERENCES `quests.users`(`quest_id`)
+);

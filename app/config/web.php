@@ -15,6 +15,7 @@ $config = [
     ],
     'modules' => [
         'admin' => ['class' => 'app\modules\admin\Module'],
+        'main' => ['class' => 'app\modules\main\Module'],
     ],
     'components' => [
         'request' => [
@@ -24,7 +25,6 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-//            'class' => 'app\core\components\user\User',
             'identityClass' => 'app\models\User',
 //            'loginUrl' => ['auth/login'],
             'enableAutoLogin' => true,

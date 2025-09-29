@@ -1,5 +1,9 @@
 <?php
 
+use Dotenv\Dotenv;
+$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 return [
     'class' => 'yii\db\Connection',
     // Почему прописано mysql вместо localhost? https://stackoverflow.com/questions/46723215/docker-sqlstatehy000-2002-no-such-file-or-directory
