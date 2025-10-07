@@ -20,36 +20,67 @@ $this->registerMetaTag(['name' => 'keywords', 'content' => $this->params['meta_k
 $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii::getAlias('@web/favicon.ico')]);
 ?>
 <?php $this->beginPage() ?>
-<!DOCTYPE html>
-<html lang="<?= Yii::$app->language ?>" class="h-100">
-<head>
-    <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
-</head>
-<body class="d-flex flex-column h-100">
-<?php $this->beginBody() ?>
+    <!DOCTYPE html>
+    <html lang="<?= Yii::$app->language ?>" class="h-100">
+    <head>
+        <title><?= Html::encode($this->title) ?></title>
+        <?php $this->head() ?>
+    </head>
+    <body class="d-flex flex-column h-100">
+    <?php $this->beginBody() ?>
 
-<header id="header">
+    <header id="header">
+        <?php
+        NavBar::begin([
+                'brandLabel' => Yii::$app->name,
+                'brandUrl' => Yii::$app->homeUrl,
+                'options' => ['class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top']
+        ]);
+        echo Nav::widget([
+                'options' => ['class' => 'navbar-nav'],
+                'items' => array_filter([
+                        ['label' => 'Главная', 'url' => ['/site/index']],
+                        !Yii::$app->user->isGuest ? ['label' => 'Квесты', 'url' => ['/admin/quests/index']] : null,
+                        !Yii::$app->user->isGuest ? ['label' => 'Вопросы', 'url' => ['/admin/quests-questions/index']] : null,
+                        !Yii::$app->user->isGuest ? ['label' => 'Станции', 'url' => ['/admin/quests-stations/index']] : null,
+                        !Yii::$app->user->isGuest ? ['label' => 'Пользователи', 'url' => ['/admin/quests-users/index']] : null,
+                        Yii::$app->user->isGuest
+                                ? ['label' => 'Войти', 'url' => ['/auth/login']]
+                                : '<li class="nav-item">'
+                                . Html::beginForm(['/auth/logout'])
+                                . Html::submitButton(
+                                        'Выйти (' . Yii::$app->user->identity->username . ')',
+                                        ['class' => 'nav-link btn btn-link logout']
+                                )
+                                . Html::endForm()
+                                . '</li>'
+                ]),
+        ]);
+        NavBar::end();
+        ?>
+    </header>
 
-</header>
+    <main id="main" class="flex-shrink-0" role="main">
+        <div class="container mt-5 pt-3">
+            <?php if (!empty($this->params['breadcrumbs'])): ?>
+                <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
+            <?php endif ?>
+            <?= Alert::widget() ?>
+            <?= $content ?>
+        </div>
+    </main>
 
-<main id="main" class="flex-shrink-0" role="main">
-    <div class="container">
-        <?php if (!empty($this->params['breadcrumbs'])): ?>
-            <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
-        <?php endif ?>
-        <?= Alert::widget() ?>
-        <?= $content ?>
-    </div>
-</main>
+    <footer id="footer" class="mt-auto py-3 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    &copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-<footer id="footer" class="mt-auto py-3 bg-light">
-    <div class="container">
-
-    </div>
-</footer>
-
-<?php $this->endBody() ?>
-</body>
-</html>
+    <?php $this->endBody() ?>
+    </body>
+    </html>
 <?php $this->endPage() ?>

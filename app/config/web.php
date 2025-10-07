@@ -49,10 +49,9 @@ $config = [
         'assetManager' => [
             'appendTimestamp' => true,
             'bundles' => [
-                // Убираем зависимости, так как у метроника свой bs
-                'yii\bootstrap5\BootstrapAsset' => [
-                    'css' => []
-                ],
+//                'yii\bootstrap5\BootstrapAsset' => [
+//                    'css' => []
+//                ],
             ],
         ],
         'db' => $db,

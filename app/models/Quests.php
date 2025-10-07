@@ -9,6 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $name
+ * @property string|null $tags
  * @property string|null $created_at
  * @property string|null $deleted_at
  *
@@ -17,7 +18,6 @@ use Yii;
  */
 class Quests extends \yii\db\ActiveRecord
 {
-
 
     /**
      * {@inheritdoc}
@@ -33,9 +33,9 @@ class Quests extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['deleted_at'], 'default', 'value' => null],
+            [['tags', 'deleted_at'], 'default', 'value' => null],
             [['name'], 'required'],
-            [['created_at', 'deleted_at'], 'safe'],
+            [['tags', 'created_at', 'deleted_at'], 'safe'],
             [['name'], 'string', 'max' => 255],
         ];
     }
@@ -48,6 +48,7 @@ class Quests extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'name' => 'Name',
+            'tags' => 'Tags',
             'created_at' => 'Created At',
             'deleted_at' => 'Deleted At',
         ];
@@ -73,4 +74,28 @@ class Quests extends \yii\db\ActiveRecord
         return $this->hasMany(QuestsUsers::class, ['quest_id' => 'id']);
     }
 
+    /**
+     * Преобразуем tags в массив
+     */
+    public function afterFind()
+    {
+        parent::afterFind();
+        if (is_string($this->tags)) {
+            $decoded = json_decode($this->tags, true);
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $this->tags = $decoded;
+            }
+        }
+    }
+
+    /**
+     * Перед сохранением превращаем массив обратно в JSON
+     */
+    public function beforeSave($insert)
+    {
+        if (is_array($this->tags) || is_object($this->tags)) {
+            $this->tags = json_encode($this->tags, JSON_UNESCAPED_UNICODE);
+        }
+        return parent::beforeSave($insert);
+    }
 }

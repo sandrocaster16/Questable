@@ -8,13 +8,12 @@ use Yii;
  * This is the model class for table "users".
  *
  * @property int $id
- * @property int $user_id
- * @property int $quest_id
+ * @property string $username
+ * @property int $tg_id
  * @property string $role
- * @property int|null $command_id
- * @property int|null $points
- * @property string|null $banned_at
  * @property string $created_at
+ * @property string|null $deleted_at
+ * @property string|null $banned_at
  *
  * @property QuestsUsers[] $questsUsers
  */
@@ -42,12 +41,13 @@ class Users extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['command_id', 'points', 'banned_at'], 'default', 'value' => null],
+            [['deleted_at', 'banned_at'], 'default', 'value' => null],
             [['role'], 'default', 'value' => 'user'],
-            [['user_id', 'quest_id'], 'required'],
-            [['user_id', 'quest_id', 'command_id', 'points'], 'integer'],
+            [['username', 'tg_id'], 'required'],
+            [['tg_id'], 'integer'],
             [['role'], 'string'],
-            [['banned_at', 'created_at'], 'safe'],
+            [['created_at', 'deleted_at', 'banned_at'], 'safe'],
+            [['username'], 'string', 'max' => 255],
             ['role', 'in', 'range' => array_keys(self::optsRole())],
         ];
     }
@@ -59,13 +59,12 @@ class Users extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'user_id' => 'User ID',
-            'quest_id' => 'Quest ID',
+            'username' => 'Username',
+            'tg_id' => 'Tg ID',
             'role' => 'Role',
-            'command_id' => 'Command ID',
-            'points' => 'Points',
-            'banned_at' => 'Banned At',
             'created_at' => 'Created At',
+            'deleted_at' => 'Deleted At',
+            'banned_at' => 'Banned At',
         ];
     }
 

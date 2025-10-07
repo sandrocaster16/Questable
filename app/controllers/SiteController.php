@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\core\services\DataProvider;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -12,32 +13,6 @@ use app\models\ContactForm;
 
 class SiteController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'access' => [
-                'class' => AccessControl::class,
-                'only' => ['logout'],
-                'rules' => [
-                    [
-                        'actions' => ['logout'],
-                        'allow' => true,
-                        'roles' => ['@'],
-                    ],
-                ],
-            ],
-            'verbs' => [
-                'class' => VerbFilter::class,
-                'actions' => [
-                    'logout' => ['post'],
-                ],
-            ],
-        ];
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -54,13 +29,23 @@ class SiteController extends Controller
         ];
     }
 
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
     public function actionIndex()
     {
-        return $this->render('index');
+        $dp = new DataProvider();
+
+        $logo_path = '\app\pictures\users_avatars\ . Yii::$app->user->identity->tg_id';
+        if (!file_exists($logo_path)) {
+            $logo_path = '\app\pictures\users_avatars\default.png';
+        }
+
+        return $this->render('index', [
+//            'last_quests' => $dp->getLastQuestsByUserId(Yii::$app->user->identity->id),
+//            'popular_quests' => $dp->getPopularQuests(),
+//            'logo_path' => $logo_path
+        ]);
+    }
+
+    public function actionInfo() {
+        return $this->render('info');
     }
 }

@@ -1,0 +1,6 @@
+{
+    "require": {
+        "twbs/bootstrap": "5.3.8",
+        "kartik-v/yii2-widget-select2": "^2.2"
+    }
+}
