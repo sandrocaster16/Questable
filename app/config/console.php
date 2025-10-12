@@ -1,6 +1,7 @@
 <?php
 
 use yii\console\controllers\MigrateController;
+use yii\rbac\DbManager;
 
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
@@ -27,9 +28,9 @@ $config = [
                 ],
             ],
         ],
-//        'authManager' => [
-//            'class' => DbManager::class,
-//        ],
+       'authManager' => [
+           'class' => DbManager::class,
+       ],
         'db' => $db,
     ],
     'params' => $params,
@@ -37,11 +38,12 @@ $config = [
         'migrate' => [
             'class' => MigrateController::class,
             'migrationPath' => [
+                '@app/migrations',
                 '@yii/rbac/migrations',
             ],
             'migrationNamespaces' => [
                 'app\console\migrations',
-//                'yii\queue\db\migrations',
+                // 'yii\queue\db\migrations',
             ],
         ],
     ],

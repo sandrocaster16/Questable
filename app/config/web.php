@@ -1,5 +1,7 @@
 <?php
 
+use yii\rbac\DbManager;
+
 $params = require __DIR__ . '/params.php';
 $db = require __DIR__ . '/db.php';
 
@@ -54,7 +56,11 @@ $config = [
 //                ],
             ],
         ],
+        'authManager' => [ // <--- ДОБАВЬТЕ ЭТОТ БЛОК
+            'class' => DbManager::class,
+        ],
         'db' => $db,
+        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
@@ -62,6 +68,7 @@ $config = [
 //                '/' => '/personal/dashboard/index',
             ],
         ],
+        */
     ],
     'params' => $params,
 ];

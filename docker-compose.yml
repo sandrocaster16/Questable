@@ -1,38 +1,46 @@
-version: '3.2'
-
 services:
-
   app:
-    build: system
+    build:
+      context: .
+      dockerfile: system/Dockerfile
     ports:
-      - 30013:80
+      - "30013:80"
     volumes:
+      # Кэш Composer для ускорения установки зависимостей
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Синхронизация кода проекта
       - ./:/app
-    depends_on:
-      - mysql
     networks:
       - questable
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
+    # Гарантирует, что 'app' запустится только после того,
+    # как база данных будет полностью готова принимать подключения
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mariadb:11.4
     restart: unless-stopped
     ports:
-      - 3313:3306
+      - "3313:3306"
     volumes:
+      # Сохраняет данные БД на вашем компьютере
       - ./system/mysql:/var/lib/mysql
-    #command: --innodb_buffer_pool_size=1024M --innodb_read_io_threads=4 --innodb_flush_log_at_trx_commit=2 --innodb_flush_method=O_DIRECT --max-allowed-packet=268435456
     environment:
-      - MYSQL_ROOT_PASSWORD=${ROOT_PASS}
-      - MYSQL_DATABASE=questable
+      # Используем переменные из .env файла
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
       - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_USER_PASS}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
       - MARIADB_AUTO_UPGRADE=1
     networks:
       - questable
+    # Проверка "здоровья" контейнера: готов ли он принимать подключения
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -41,10 +49,10 @@ services:
     environment:
       - PMA_ARBITRARY=1
       - PMA_HOST=mysql
-    depends_on:
-      - mysql
     networks:
       - questable
+    depends_on:
+      - mysql
 
 networks:
   questable:

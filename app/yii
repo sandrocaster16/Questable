@@ -2,16 +2,19 @@
 <?php
 /**
  * Yii console bootstrap file.
- *
- * @link https://www.yiiframework.com/
- * @copyright Copyright (c) 2008 Yii Software LLC
- * @license https://www.yiiframework.com/license/
  */
 
 defined('YII_DEBUG') or define('YII_DEBUG', true);
 defined('YII_ENV') or define('YII_ENV', 'dev');
 
 require __DIR__ . '/vendor/autoload.php';
+
+// === ЗАГРУЖАЕМ .ENV В САМОМ НАЧАЛЕ ===
+// dirname(__DIR__) указывает на корень проекта '/app' внутри контейнера
+$dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
+$dotenv->load();
+// =====================================
+
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
 
 $config = require __DIR__ . '/config/console.php';

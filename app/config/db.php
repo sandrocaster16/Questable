@@ -1,19 +1,13 @@
 <?php
 
-use Dotenv\Dotenv;
-$dotenv = Dotenv::createImmutable(__DIR__ . '/..');
-$dotenv->load();
-
 return [
     'class' => 'yii\db\Connection',
-    // Почему прописано mysql вместо localhost? https://stackoverflow.com/questions/46723215/docker-sqlstatehy000-2002-no-such-file-or-directory
-    // 'dsn' => 'mysql:host=mysql;dbname=questable',
-    // 'username' => $_ENV['DB_USER'],
-    // 'password' => $_ENV['DB_PASSWORD'],
-    // 'charset' => 'utf8',
-
-    'dsn' => $_ENV['DB_DSN'],
-    'username' => $_ENV['DB_USERNAME'],
+    
+    // Собираем DSN строку из отдельных, понятных переменных из .env
+    'dsn' => 'mysql:host=' . $_ENV['DB_HOST'] . ';dbname=' . $_ENV['DB_NAME'],
+    
+    // Используем правильные имена переменных
+    'username' => $_ENV['DB_USER'],
     'password' => $_ENV['DB_PASSWORD'],
     'charset' => 'utf8',
 
