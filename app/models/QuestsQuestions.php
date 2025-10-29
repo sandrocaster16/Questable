@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 
 /**
- * This is the model class for table "quests_questions".
+ * This is the model class for table "questions".
  *
  * @property int $id
  * @property int $station_id
@@ -27,7 +27,7 @@ class QuestsQuestions extends \yii\db\ActiveRecord
      */
     public static function tableName()
     {
-        return 'quests_questions';
+        return 'questions';
     }
 
     /**

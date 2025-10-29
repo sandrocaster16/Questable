@@ -1,53 +1,59 @@
-CREATE TABLE `quests.users` (
-  `id` int,
-  `user_id` int,
-  `quest_id` int,
-  `role` enum (player/owner/volunteer),
-  `command_id` int,
-  `points` int,
-  `banned` null / datetime,
-  `created_at` datetime
+-- Таблица пользователей квестов
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  tg_id BIGINT,
+  role ENUM('root', 'admin', 'user') NOT NULL DEFAULT 'user',
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL,
+  banned DATETIME NULL
 );
 
-CREATE TABLE `users` (
-  `id` int,
-  `tg_id` int,
-  `role` enum (root/admin/user),
-  `created_at` datetime,
-  `deleted_at` null / datetime,
-  `banned` null / datetime,
-  FOREIGN KEY (`id`)
-      REFERENCES `quests.users`(`user_id`)
+-- Таблица квестов
+CREATE TABLE quests (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL
 );
 
-CREATE TABLE `quests.questions` (
-  `id` int,
-  `station_id` int,
-  `question` varchar (2048),
-  `answer` json,
-  `help` null / varchar (2048),
-  `message` null / varchar (2048),
-  `created_at` datetime,
-  `deleted_at` null / datetime
+-- Таблица станций
+CREATE TABLE stations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  quest_id INT NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL,
+  FOREIGN KEY (quest_id) REFERENCES quests(id)
+    ON DELETE CASCADE
 );
 
-CREATE TABLE `quests.stations` (
-  `id` int,
-  `quest_id` int,
-  `name` varchar (255),
-  `created_at` datetime,
-  `deleted_at` null / datetime,
-  FOREIGN KEY (`id`)
-      REFERENCES `quests.questions`(`station_id`)
+-- Таблица вопросов
+CREATE TABLE questions (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  station_id INT NOT NULL,
+  question VARCHAR(2048) NOT NULL,
+  answer LONGTEXT,
+  help VARCHAR(2048) NULL,
+  message VARCHAR(2048) NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  deleted_at DATETIME NULL,
+  FOREIGN KEY (station_id) REFERENCES stations(id)
+    ON DELETE CASCADE,
+  CHECK (JSON_VALID(answer))
 );
 
-CREATE TABLE `quests` (
-  `id` int,
-  `name` varchar (255),
-  `created_at` datetime,
-  `delete_at` null / datetime,
-  FOREIGN KEY (`id`)
-      REFERENCES `quests.stations`(`quest_id`),
-  FOREIGN KEY (`id`)
-      REFERENCES `quests.users`(`quest_id`)
+-- Таблица пользователей в контексте квестов
+CREATE TABLE quest_users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  quest_id INT NOT NULL,
+  role ENUM('player', 'owner', 'volunteer') NOT NULL DEFAULT 'player',
+  command_id INT NULL,
+  points INT DEFAULT 0,
+  banned DATETIME NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE,
+  FOREIGN KEY (quest_id) REFERENCES quests(id)
+    ON DELETE CASCADE
 );
