@@ -18,6 +18,7 @@ $config = [
     'modules' => [
         'admin' => ['class' => 'app\modules\admin\Module'],
         'main' => ['class' => 'app\modules\main\Module'],
+        'tg_api' => [ 'class' => 'app\modules\tg_api\Module'],
     ],
     'components' => [
         'request' => [
@@ -60,15 +61,13 @@ $config = [
             'class' => DbManager::class,
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-//                '/' => '/personal/dashboard/index',
+//                'POST tg_api/telegram/login' => 'tg_api/telegram/login',
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

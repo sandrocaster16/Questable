@@ -39,7 +39,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         echo Nav::widget([
                 'options' => ['class' => 'navbar-nav'],
                 'items' => array_filter([
-                        ['label' => 'Главная', 'url' => ['/site/index']],
+                        ['label' => 'Главная', 'url' => [Yii::$app->homeUrl]],
                         !Yii::$app->user->isGuest ? ['label' => 'Квесты', 'url' => ['/admin/quests/index']] : null,
                         !Yii::$app->user->isGuest ? ['label' => 'Вопросы', 'url' => ['/admin/quests-questions/index']] : null,
                         !Yii::$app->user->isGuest ? ['label' => 'Станции', 'url' => ['/admin/quests-stations/index']] : null,
