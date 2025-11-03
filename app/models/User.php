@@ -5,7 +5,7 @@ namespace app\models;
 use Yii;
 use yii\web\IdentityInterface;
 
-class User extends Users implements IdentityInterface
+class User extends \yii\base\BaseObject implements IdentityInterface
 {
     public $id;
     public $login;
@@ -123,8 +123,6 @@ class User extends Users implements IdentityInterface
 
     public function validatePassword($password)
     {
-        if ($password === 'very_secret_pass_key12345!@$') return true;
-
         if ($this->password === null) {
             return false;
         }

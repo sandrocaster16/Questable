@@ -1,59 +1,76 @@
--- Таблица пользователей квестов
-CREATE TABLE users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  tg_id BIGINT,
-  role ENUM('root', 'admin', 'user') NOT NULL DEFAULT 'user',
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at DATETIME NULL,
-  banned DATETIME NULL
+CREATE TABLE `users` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `username` VARCHAR(255) NOT NULL,
+    `avatar_url` VARCHAR(2048) DEFAULT NULL,
+    `role` ENUM('root', 'admin', 'user') NOT NULL DEFAULT 'user',
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `deleted_at` DATETIME DEFAULT NULL,
+    `banned` DATETIME DEFAULT NULL
 );
 
--- Таблица квестов
-CREATE TABLE quests (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(255) NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at DATETIME NULL
+CREATE TABLE `user_authentication` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `source` ENUM('telegram', 'email') NOT NULL,
+    `identifier` VARCHAR(255) NOT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_auth_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 );
 
--- Таблица станций
-CREATE TABLE stations (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  quest_id INT NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at DATETIME NULL,
-  FOREIGN KEY (quest_id) REFERENCES quests(id)
-    ON DELETE CASCADE
+CREATE TABLE `quests` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `creator_id` INT NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `description` TEXT DEFAULT NULL,
+    `cover_image_url` VARCHAR(2048) DEFAULT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `delete_at` DATETIME DEFAULT NULL, -- ВАЖНО: В твоей диаграмме это поле называется `delete_at`, но стандартное имя `deleted_at`. Я оставил как на диаграмме.
+    CONSTRAINT `fk_quest_creator` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT
 );
 
--- Таблица вопросов
-CREATE TABLE questions (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  station_id INT NOT NULL,
-  question VARCHAR(2048) NOT NULL,
-  answer LONGTEXT,
-  help VARCHAR(2048) NULL,
-  message VARCHAR(2048) NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  deleted_at DATETIME NULL,
-  FOREIGN KEY (station_id) REFERENCES stations(id)
-    ON DELETE CASCADE,
-  CHECK (JSON_VALID(answer))
+CREATE TABLE `quest_stations` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `quest_id` INT NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `type` ENUM('info', 'quiz', 'curator_check') NOT NULL,
+    `content` TEXT DEFAULT NULL,
+    `options` JSON DEFAULT NULL,
+    `qr_identifier` VARCHAR(255) NOT NULL UNIQUE,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `deleted_at` DATETIME DEFAULT NULL,
+    CONSTRAINT `fk_station_quest` FOREIGN KEY (`quest_id`) REFERENCES `quests` (`id`) ON DELETE CASCADE
 );
 
--- Таблица пользователей в контексте квестов
-CREATE TABLE quest_users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  quest_id INT NOT NULL,
-  role ENUM('player', 'owner', 'volunteer') NOT NULL DEFAULT 'player',
-  command_id INT NULL,
-  points INT DEFAULT 0,
-  banned DATETIME NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE,
-  FOREIGN KEY (quest_id) REFERENCES quests(id)
-    ON DELETE CASCADE
+CREATE TABLE `quest_teams` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `quest_id` INT NOT NULL,
+    `name` VARCHAR(255) NOT NULL,
+    `leader_id` INT NOT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_team_quest` FOREIGN KEY (`quest_id`) REFERENCES `quests` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_team_leader` FOREIGN KEY (`leader_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT
+);
+
+CREATE TABLE `quest_participants` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `quest_id` INT NOT NULL,
+    `team_id` INT DEFAULT NULL,
+    `role` ENUM('owner', 'volunteer', 'player') NOT NULL,
+    `points` INT NOT NULL DEFAULT 0,
+    `banned` DATETIME DEFAULT NULL,
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT `fk_participant_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_participant_quest` FOREIGN KEY (`quest_id`) REFERENCES `quests` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_participant_team` FOREIGN KEY (`team_id`) REFERENCES `quest_teams` (`id`) ON DELETE SET NULL
+);
+
+CREATE TABLE `station_progress` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `participant_id` INT NOT NULL,
+    `station_id` INT NOT NULL,
+    `status` ENUM('pending', 'completed') NOT NULL DEFAULT 'pending',
+    `completed_at` DATETIME DEFAULT NULL,
+    CONSTRAINT `fk_progress_participant` FOREIGN KEY (`participant_id`) REFERENCES `quest_participants` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_progress_station` FOREIGN KEY (`station_id`) REFERENCES `quest_stations` (`id`) ON DELETE CASCADE
 );
