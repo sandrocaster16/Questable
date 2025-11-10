@@ -6,9 +6,3 @@ RUN sed -i -e 's|/app/web|/app/app/web|g' /etc/apache2/sites-available/000-defau
 
 # Включаем mod_rewrite для красивых URL
 RUN a2enmod rewrite
-
-# Добавляем репозиторий в безопасный список Git, чтобы избежать ошибки ownership
-RUN git config --global --add safe.directory /app
-
-# УСТАНАВЛИВАЕМ РАБОЧУЮ ДИРЕКТОРИЮ
-WORKDIR /app/app
