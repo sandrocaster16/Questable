@@ -1,97 +1,86 @@
 const sidebar = document.getElementById('sidebar');
-const openBtn = document.getElementById('open-btn');
+const logoBtn = document.getElementById('logoBtn');
 const closeBtn = document.getElementById('close-btn');
 const overlay = document.getElementById('overlay');
-const sidebarLogo = document.getElementById('sidebar-logo');
-let isAnimating = false;
 
 function openSidebar() {
-    if (isAnimating) return;
-    isAnimating = !0;
-    const t = openBtn.getBoundingClientRect();
-    sidebarLogo.style.opacity = "0", openBtn.style.opacity = "0";
-    const e = openBtn.cloneNode(!0);
-    e.classList.add("logo-clone"), document.body.appendChild(e), e.style.top = `${t.top}px`, e.style.left = `${t.left}px`, e.style.width = `${t.width}px`, e.style.height = `${t.height}px`, sidebar.classList.add("open"), overlay.classList.add("active"), requestAnimationFrame(() => {
-        const t = sidebarLogo.getBoundingClientRect();
-        e.style.top = `${t.top}px`, e.style.left = `${t.left}px`, e.style.width = `${t.width}px`, e.style.height = `${t.height}px`
-    }), e.addEventListener("transitionend", () => { sidebarLogo.style.opacity = "1", e.remove(), isAnimating = !1 }, { once: !0 })
+    sidebar.classList.add('open');
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeSidebar() {
-    if (isAnimating) return;
-    isAnimating = !0;
-    const t = sidebarLogo.getBoundingClientRect();
-    sidebarLogo.style.opacity = "0";
-    const e = sidebarLogo.cloneNode(!0);
-    e.classList.add("logo-clone"), document.body.appendChild(e), e.style.top = `${t.top}px`, e.style.left = `${t.left}px`, e.style.width = `${t.width}px`, e.style.height = `${t.height}px`, sidebar.classList.remove("open"), overlay.classList.remove("active"), requestAnimationFrame(() => {
-        const t = openBtn.getBoundingClientRect();
-        e.style.top = `${t.top}px`, e.style.left = `${t.left}px`, e.style.width = `${t.width}px`, e.style.height = `${t.height}px`
-    }), e.addEventListener("transitionend", () => { openBtn.style.opacity = "1", e.remove(), isAnimating = !1 }, { once: !0 })
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+    document.body.style.overflow = 'auto';
 }
-openBtn.addEventListener("click", openSidebar), closeBtn.addEventListener("click", closeSidebar), overlay.addEventListener("click", closeSidebar);
 
+logoBtn.addEventListener('click', openSidebar);
+closeBtn.addEventListener('click', closeSidebar);
+overlay.addEventListener('click', closeSidebar);
 
-// цикличный слайдер
-function setupSlider(sectionId) {
-    const section = document.getElementById(sectionId);
-    const track = section.querySelector('.cards-track');
-    const prevBtn = section.querySelector('.prev-btn');
-    const nextBtn = section.querySelector('.next-btn');
-    const originalCards = Array.from(track.children);
+// Slider functionality
+function setupSlider(trackId, prevBtnId, nextBtnId) {
+    const track = document.getElementById(trackId);
+    const prevBtn = document.getElementById(prevBtnId);
+    const nextBtn = document.getElementById(nextBtnId);
+    const cards = Array.from(track.children);
+    const cardCount = cards.length;
 
-    if (originalCards.length <= 3) {
+    if (cardCount <= 3) {
         prevBtn.disabled = true;
         nextBtn.disabled = true;
         return;
     }
 
-    const itemsVisible = 3;
-    const moveDistance = originalCards[0].offsetWidth + parseInt(getComputedStyle(track).gap);
+    const cardWidth = cards[0].offsetWidth;
+    const gap = parseInt(getComputedStyle(track).gap);
+    const moveDistance = cardWidth + gap;
 
-    // Клонируем элементы для создания "бесконечного" эффекта
-    const clonesStart = originalCards.slice(-itemsVisible).map(card => card.cloneNode(true));
-    const clonesEnd = originalCards.slice(0, itemsVisible).map(card => card.cloneNode(true));
+    // Clone cards for infinite effect
+    const startClones = cards.slice(-3).map(card => card.cloneNode(true));
+    const endClones = cards.slice(0, 3).map(card => card.cloneNode(true));
 
-    clonesStart.forEach(clone => track.prepend(clone));
-    clonesEnd.forEach(clone => track.append(clone));
+    startClones.forEach(clone => track.prepend(clone));
+    endClones.forEach(clone => track.appendChild(clone));
 
-    // Начальная позиция, чтобы были видны настоящие первые карточки
-    let currentIndex = itemsVisible;
-    track.style.transform = `translateX(-${currentIndex * moveDistance}px)`;
+    let currentPosition = 3;
+    track.style.transform = `translateX(-${currentPosition * moveDistance}px)`;
 
-    let isMoving = false;
+    let isAnimating = false;
 
-    const move = (direction) => {
-        if (isMoving) return;
-        isMoving = true;
 
-        currentIndex += direction;
-        track.style.transition = 'transform 0.3s cubic-bezier(0.1, 0.5, 0.5, 1)';
-        track.style.transform = `translateX(-${currentIndex * moveDistance}px)`;
-    };
+    function moveSlider(direction) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            currentPosition += direction;
+            track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            track.style.transform = `translateX(-${currentPosition * moveDistance}px)`;
+    }
 
-    // Когда анимация заканчивается, проверяем, не нужно ли "телепортировать" ленту
     track.addEventListener('transitionend', () => {
-        if (currentIndex >= originalCards.length + itemsVisible) {
-            track.style.transition = 'none'; // Убираем анимацию
-            currentIndex = itemsVisible;
-            track.style.transform = `translateX(-${currentIndex * moveDistance}px)`;
+        if (currentPosition >= cardCount + 3) {
+            track.style.transition = 'none';
+            currentPosition = 3;
+            track.style.transform = `translateX(-${currentPosition * moveDistance}px)`;
         }
-        if (currentIndex <= itemsVisible - 1) {
-            track.style.transition = 'none'; // Убираем анимацию
-            currentIndex = originalCards.length + itemsVisible - 1;
-            track.style.transform = `translateX(-${currentIndex * moveDistance}px)`;
+        if (currentPosition <= 2) {
+            track.style.transition = 'none';
+            currentPosition = cardCount + 2;
+            track.style.transform = `translateX(-${currentPosition * moveDistance}px)`;
         }
-        // Возвращаем анимацию обратно через микро-задержку
+        
         setTimeout(() => {
-            track.style.transition = 'transform 0.3s cubic-bezier(0.1, 0.5, 0.5, 1)';
-            isMoving = false;
-        });
+            track.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            isAnimating = false;
+        }, 50);
     });
 
-    nextBtn.addEventListener('click', () => move(1));
-    prevBtn.addEventListener('click', () => move(-1));
+    prevBtn.addEventListener('click', () => moveSlider(-1));
+    nextBtn.addEventListener('click', () => moveSlider(1));
 }
 
-setupSlider('history-section');
-setupSlider('promo-section');
+// Initialize sliders
+// setupSlider('history-track', 'history-prev-btn', 'history-next-btn');
+setupSlider('promo-track', 'promo-prev-btn', 'promo-next-btn');
