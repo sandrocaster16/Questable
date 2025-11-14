@@ -86,3 +86,492 @@ a.desc:after {
 .form-group {
     margin-bottom: 1rem;
 }
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #7E57C2;
+    --primary-dark: #6A45B0;
+    --primary-light: #B39DDB;
+    --secondary-color: #26A69A;
+    --accent-color: #FF7043;
+    --background-color: #F5F7FA;
+    --surface-color: #FFFFFF;
+    --text-primary: #2C3E50;
+    --text-secondary: #546E7A;
+    --text-light: #90A4AE;
+    --border-color: #E1E8ED;
+
+    --card-width: 320px;
+    --card-height: 400px;
+    --card-gap: 25px;
+    --sidebar-width: 350px;
+}
+
+.crazy{
+    background-image: url("https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen");
+    background-size: cover;
+    background-position: center center;
+}
+
+body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: var(--background-color);
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+hr {
+    border: none;
+    border-top: 2px solid var(--border-color);
+    margin: 30px 0;
+}
+
+/* шапка */
+.header{
+    height: 200px;
+    display: flex;
+    align-items: center;
+    padding: 20px 30px;
+    background: linear-gradient(135deg, var(--surface-color) 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    position: relative;
+    z-index: 10;
+}
+
+.avatar{
+    height: 80%;
+    aspect-ratio: 1;
+    border-radius: 15px;
+    background-color: green; /*временно*/
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.user-profile-section {
+    display: flex;
+    align-items: center;
+    margin-left: 20px;
+    gap: 25px;
+}
+
+.nickname{
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.user-id{
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.settings-icon {
+    font-size: 22px;
+    color: var(--text-light);
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.settings-icon:hover {
+    color: var(--primary-color);
+    background-color: rgba(126, 87, 194, 0.1);
+    transform: rotate(30deg);
+}
+
+.logo{
+    height: 80%;
+    aspect-ratio: 1;
+    border-radius: 15px;
+    background-color: violet; /*временно*/
+    text-align: center;
+    position: relative;
+    margin-left: auto;
+    cursor: pointer;
+    z-index: 100;
+    transition: all 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 16px rgba(126, 87, 194, 0.6);
+}
+
+/* Сайдбар и анимация логотипа */
+.sidebar {
+    position: fixed;
+    height: 100%;
+    width: var(--sidebar-width);
+    top: 0;
+    right: -100%;
+    background-color: var(--surface-color);
+    box-shadow: -4px 0px 20px rgba(0, 0, 0, 0.15);
+    z-index: 999;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar.open{
+    right: 0;
+}
+
+.overlay{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s ease;
+}
+
+.overlay.active{
+    opacity: 1;
+    visibility: visible;
+}
+
+.sidebar-header{
+    text-align: center;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.sidebar-logo{
+    width: 100px;
+    height: 100px;
+    margin: auto;
+    background-color: green;
+}
+
+.close-btn {
+    position: absolute;
+    top: -10px;
+    left: 0;
+    font-size: 36px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-btn:hover {
+    color: var(--primary-color);
+}
+
+.nav-links {
+    list-style: none;
+    flex-grow: 1;
+    padding: 0;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-size: 20px;
+    font-weight: 500;
+    display: block;
+    padding: 15px 20px;
+    border-radius: 12px;
+    line-height: 23px;
+    transition: all 0.2s ease;
+}
+
+.nav-links a:hover {
+    background-color: rgba(126, 87, 194, 0.1);
+    color: var(--primary-color);
+    font-size: 22px;
+}
+
+.nav-links hr {
+    margin: 10px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+.logo-clone{
+    position: fixed;
+    z-index: 9999;
+    border-radius: 22px;
+    transition: all 0.5s cubic-bezier(0.6, 0, 0.4, 1);
+}
+
+.section-title{
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 40px;
+}
+
+.section {
+    margin-bottom: 50px;
+}
+
+/*slider*/
+.slider{
+    width: 100%;
+    display: flex;
+}
+
+.slider-wrapper{
+    width: calc((var(--card-width) * 3) + (var(--card-gap) * 2));
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+/*кнопки слайдера*/
+.slider-btn{
+    height: var(--card-height);
+    width: 80px;
+    font-size: 30px;
+    margin: auto 0;
+    background: none;
+    border: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.slider-btn:hover{
+    font-size: 40px;
+}
+
+.cards-track{
+    display: flex;
+    gap: var(--card-gap);
+}
+
+.quest-card {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 var(--card-width);
+    width: var(--card-width);
+    height: var(--card-height);
+    background-color: var(--surface-color);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    cursor: pointer;
+}
+
+.card-img {
+    width: 100%;
+    height: 60%;
+    overflow: hidden;
+}
+
+.card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.quest-card:hover .card-img img {
+    transform: scale(1.05);
+}
+
+.card-text {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-text h3 {
+    margin-bottom: 10px;
+    font-size: 20px;
+    color: var(--text-primary);
+}
+
+.card-text p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+/* === СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА === */
+.modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background-color: var(--surface-color);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 16px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal.open .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-header h2 {
+    color: var(--text-primary);
+    font-size: 22px;
+    margin: 0;
+}
+
+.close-modal-btn {
+    color: var(--text-light);
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-modal-btn:hover {
+    color: var(--text-primary);
+}
+
+.modal-body {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.form-group input[type="text"] {
+    padding: 12px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    font-size: 16px;
+    color: var(--text-primary);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(126, 87, 194, 0.2);
+}
+
+.avatar-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.avatar-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 15px;
+    object-fit: cover;
+    text-align: center;
+    border: 3px solid var(--border-color);
+}
+
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px 25px;
+    border-top: 1px solid var(--border-color);
+    background-color: #f9fafb;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    gap: 10px;
+}
+
+/* Стили для кнопок */
+.btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: var(--primary-dark);
+}
+
+.btn-secondary {
+    background-color: #e9ecef;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+}
+.btn-secondary:hover {
+    background-color: #dee2e6;
+}
+
+.history-grid {
+    display: flex;
+    flex-wrap: wrap; /* Главное свойство для переноса карточек */
+    gap: var(--card-gap);
+
+    /* Устанавливаем ширину, как у старого слайдера, и центрируем */
+    width: calc((var(--card-width) * 3) + (var(--card-gap) * 2));
+    margin: 0 auto;
+}
