@@ -94,4 +94,6 @@ if (YII_ENV_DEV) {
     ];
 }
 
+Yii::setAlias('@upload', dirname(__DIR__) . '/pictures');
+
 return $config;

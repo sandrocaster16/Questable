@@ -1,17 +1,29 @@
+<?php
+/** @var yii\web\View $this */
+/** @var int $id */
+/** @var string $avatar_path */
+/** @var string $logo_path */
+/** @var string $username */
+/** @var array $popular_quests */
+/** @var array $user_history */
+
+use yii\helpers\Html;
+
+$this->title = 'Questable';
+?>
+
+
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Questable</title>
-    <link rel="stylesheet" href="../../../frontend/style.css">
-    <!-- Иконки Font Awesome для шестеренки -->
+    <title> <?= $this->title ?> </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 
 <body>
-    <!-- Панель -->
     <div class="overlay" id="overlay"></div>
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -30,27 +42,24 @@
     </nav>
 
     <div class="container">
-        <!-- шапка -->
         <header class="header">
             <div class="avatar">
-                <img src="" alt="avatar">
+                <img src="<?= $avatar_path ?>" alt="avatar">
             </div>
-            <!-- Новый контейнер для информации о пользователе и кнопки настроек -->
             <div class="user-profile-section">
                 <div class="user-info">
-                    <p class="nickname">Ник Пользователя</p>
-                    <p class="user-id">ID: 12345678</p>
+                    <p class="nickname"><?= $username ?></p>
+                    <p class="user-id">ID: <?= $id ?> </p>
                     <div class="settings-icon" id="settings-btn">
                         <i class="fas fa-cog"></i>
                     </div>
                 </div>
             </div>
             <div class="logo" id="logoBtn">
-                <img src="" alt="logo">
+                <img src="<?= Html::encode($logo_path) ?>" alt="logo">
             </div>
         </header>
 
-        <!-- Обновленное модальное окно настроек -->
         <div id="settings-modal" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
@@ -66,7 +75,7 @@
                     </div>
                     <div class="form-group">
                         <label for="nickname-input">Никнейм</label>
-                        <input type="text" id="nickname-input" placeholder="Введите новый никнейм" value="Ник Пользователя">
+                        <input type="text" id="nickname-input" placeholder="Введите новый никнейм" value="<?= $username ?>">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -85,101 +94,46 @@
                 <button class="slider-btn prev-btn" id="promo-prev-btn">&lt;</button>
                 <div class="slider-wrapper">
                     <div class="cards-track" id="promo-track">
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
+                        <?php foreach ($popular_quests as $quest): ?>
+                            <div class="quest-card">
+                                <div class="card-img">
+                                    <img src="<?= $quest['cover_image_url'] ?>" alt="">
+                                </div>
+                                <div class="card-text">
+                                    <h3> <?= $quest['name'] ?> </h3>
+                                    <p> <?= $quest['description'] ?> </p>
+                                </div>
                             </div>
-                            <div class="card-text">
-                                <h3>Тест 1</h3>
-                                <p>Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание Описание </p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 1</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 1</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 1</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
+                        <?php endforeach; ?>
                     </div>
                 </div>
                 <button class="slider-btn next-btn" id="promo-next-btn">&gt;</button>
             </div>
         </section>
         <hr>
-        <!-- ИЗМЕНЕННАЯ СЕКЦИЯ "ИСТОРИЯ ПОСЕЩЕНИЙ" -->
+
         <section class="section" id="history-section">
             <h2 class="section-title">История посещений</h2>
-            <div class="history-grid">
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3>Посещенный квест 1</h3>
-                        <p>Краткое описание пройденного квеста.</p>
-                    </div>
+            <?php if (!empty($user_history)): ?>
+                <div class="history-grid">
+                    <?php foreach ($user_history as $quest): ?>
+                        <div class="quest-card">
+                            <div class="card-img">
+                                <img src="<?= $quest['cover_image_url'] ?>" alt="">
+                            </div>
+                            <div class="card-text">
+                                <h3> <?= $quest['name'] ?> </h3>
+                                <p> <?= $quest['description'] ?> </p>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3>Посещенный квест 2</h3>
-                        <p>Краткое описание пройденного квеста.</p>
-                    </div>
-                </div>
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3>Посещенный квест 3</h3>
-                        <p>Краткое описание пройденного квеста.</p>
-                    </div>
-                </div>
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3>Посещенный квест 4</h3>
-                        <p>Краткое описание пройденного квеста. Эта карточка уже на новой строке.</p>
-                    </div>
-                </div>
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="https://news.store.rambler.ru/img/be036e2581f9af7e7d1d467bfe44f763?img-format=auto&img-1-resize=height:400,fit:max&img-2-filter=sharpen" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3>Посещенный квест 5</h3>
-                        <p>Краткое описание пройденного квеста.</p>
-                    </div>
-                </div>
-            </div>
+            <?php else: ?>
+<!--            TODO: дописать пустую историю-->
+                <h2 class="section-title">Пусто</h2>
+            <?php endif; ?>
         </section>
     </div>
-    <script src="../../../frontend/script.js"></script>
 </body>
 
 </html>
