@@ -26,6 +26,7 @@ class AppAsset extends AssetBundle
         'plugins/ckeditor/css/styles.css',
 //        'css/fonts.css',
         'css/app.css',
+        'css/index.css', // временный общий файл
     ];
     public $js = [
         'plugins/jquery/jquery-3.7.1.min.js',
