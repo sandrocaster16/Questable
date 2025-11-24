@@ -33,7 +33,7 @@ $this->title = 'Questable';
         <ul class="nav-links">
             <li><a href="/">Главная</a></li>
             <hr>
-            <li><a href="/create-quest">Создать квест</a></li>
+            <li><a href="/quest/create">Создать квест</a></li>
             <hr>
             <li><a href="/info">О проекте</a></li>
 

@@ -39,8 +39,7 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         if ((string)self::$admin['id'] === (string)$id) {
             return new static([
                 'id'           => self::$admin['id'],
-                'login'        => self::$admin['login'],
-                'password' => self::$admin['password'],
+                'login'        => self::$admin['login']
             ]);
         }
 
@@ -48,8 +47,7 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         if ($userAR) {
             return new static([
                 'id'           => $userAR->id,
-                'login'        => $userAR->login,
-                'password' => $userAR->password,
+                'login'        => $userAR->username
             ]);
         }
         return null;
@@ -80,8 +78,7 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         if (strcasecmp((string)(self::$admin['login'] ?? ''), (string)$login) === 0) {
             return new static([
                 'id'           => self::$admin['id'],
-                'login'        => self::$admin['login'],
-                'password' => self::$admin['password'],
+                'login'        => self::$admin['login']
             ]);
         }
 
@@ -89,8 +86,7 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         if ($userAR) {
             return new static([
                 'id'           => $userAR->id,
-                'login'        => $userAR->login,
-                'password' => $userAR->password,
+                'login'        => $userAR->login
             ]);
         }
         return null;
@@ -113,23 +109,15 @@ class User extends \yii\base\BaseObject implements IdentityInterface
 
     public function getAuthKey()
     {
-        return $this->authKey;
+        return null;
     }
 
     public function validateAuthKey($authKey)
     {
-        return hash_equals((string)$this->authKey, (string)$authKey);
+        return $this->getAuthKey() === $authKey;
     }
 
-    public function validatePassword($password)
-    {
-        if ($this->password === null) {
-            return false;
-        }
-        return Yii::$app->security->validatePassword($password, $this->password);
-    }
-
-    public function isAdmin()
+    public function isAdmin(): bool
     {
         return $this->id === self::$admin['id'];
     }

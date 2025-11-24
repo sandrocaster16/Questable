@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "users".
@@ -20,7 +21,7 @@ use Yii;
  * @property Quests[] $quests
  * @property UserAuthentication[] $userAuthentications
  */
-class Users extends \yii\db\ActiveRecord
+class Users extends \yii\db\ActiveRecord  implements IdentityInterface
 {
 
     /**
@@ -170,5 +171,49 @@ class Users extends \yii\db\ActiveRecord
     public function setRoleToUser()
     {
         $this->role = self::ROLE_USER;
+    }
+
+    /**
+     * Находит пользователя по ID.
+     * Добавили проверку deleted_at => null (Soft Delete)
+     */
+    public static function findIdentity($id)
+    {
+        return static::findOne(['id' => $id, 'deleted_at' => null]);
+    }
+
+    /**
+     * Находит пользователя по токену (нужно для API, пока возвращаем null)
+     */
+    public static function findIdentityByAccessToken($token, $type = null)
+    {
+        return null;
+    }
+
+    /**
+     * Возвращает ID пользователя
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Возвращает ключ авторизации (для "Запомнить меня")
+     * Так как в твоей схеме БД нет поля auth_key, пока возвращаем null.
+     * Для безопасности в будущем лучше добавить колонку auth_key varchar(32).
+     */
+    public function getAuthKey()
+    {
+        // return $this->auth_key; // Если добавишь колонку в БД
+        return null;
+    }
+
+    /**
+     * Проверяет ключ авторизации
+     */
+    public function validateAuthKey($authKey)
+    {
+        return $this->getAuthKey() === $authKey;
     }
 }

@@ -34,10 +34,10 @@ class SiteController extends Controller
     {
         $dp = new DataProvider();
 
-        $logo_path = Url::to(Yii::getAlias('@upload/' . '2.jpeg'));
+        $logo_path = Url::to(Yii::getAlias('@upload/' . '3.jpeg'));
 //        $logo_path = Yii::getAlias('@upload/' . Yii::$app->user->identity->id . '.jpeg');
         if (!file_exists($logo_path)) {
-            $logo_path = Url::to(Yii::getAlias('@upload/users_avatars/default.jpeg'));
+            $logo_path = Url::to(Yii::getAlias('@upload/users_avatars/default.png'));
         }
 
         $avatar_path = Url::to(Yii::getAlias('@upload/' . 'users_avatars/' . 'avatar.jpeg'));

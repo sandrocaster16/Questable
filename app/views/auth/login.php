@@ -1,43 +1,31 @@
 <?php
+use yii\helpers\Url;
 
-/** @var yii\web\View $this */
-/** @var app\models\LoginForm $model */
-
-use yii\bootstrap5\ActiveForm;
-use yii\bootstrap5\Html;
-
-$this->title = 'Вход';
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Вход в Questable';
+$botUsername = Yii::$app->params['telegramBotUsername'];
+$redirectUrl = Url::to(['auth/tg-callback'], true); // Абсолютный URL для коллбека
 ?>
 
-<div class="d-flex justify-content-center align-items-center">
-    <div class="card shadow-sm" style="width: 400px;">
-        <div class="card-body p-4">
-            <h3 class="card-title text-center mb-4"><?= Html::encode($this->title) ?></h3>
+<div class="container" style="height: 80vh; display: flex; align-items: center; justify-content: center;">
+    <div class="quest-form-container" style="text-align: center; width: 100%; max-width: 400px; padding: 40px;">
 
-            <?php $form = ActiveForm::begin([
-                'id' => 'login-form',
-                'options' => ['class' => 'form-horizontal'],
-                'fieldConfig' => [
-                    'template' => "{label}\n{input}\n{error}",
-                    'labelOptions' => ['class' => 'form-label fw-semibold'],
-                    'inputOptions' => ['class' => 'form-control form-control-sm'],
-                    'errorOptions' => ['class' => 'invalid-feedback d-block'],
-                ],
-            ]); ?>
+        <h2 class="section-title" style="margin-bottom: 10px;">Вход</h2>
+        <p style="color: var(--text-secondary); margin-bottom: 30px;">
+            Войдите, чтобы создавать квесты и сохранять прогресс.
+        </p>
 
-            <?= $form->field($model, 'username')->textInput(['autofocus' => true])->label('Логин') ?>
-            <?= $form->field($model, 'password')->passwordInput()->label('Пароль') ?>
-            <?= $form->field($model, 'rememberMe')->checkbox([
-                'template' => "<div class=\"form-check\">{input} {label}</div>\n{error}",
-                'labelOptions' => ['class' => 'form-check-label'],
-            ])->label('Запомнить меня') ?>
+        <!-- Telegram Widget Script -->
+        <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="<?= $botUsername ?>"
+                data-size="large"
+                data-radius="12"
+                data-auth-url="<?= $redirectUrl ?>"
+                data-request-access="write">
+        </script>
 
-            <div class="d-grid mt-3">
-                <?= Html::submitButton('Войти', ['class' => 'btn btn-primary btn-sm', 'name' => 'login-button']) ?>
-            </div>
-
-            <?php ActiveForm::end(); ?>
+        <div style="margin-top: 20px; font-size: 0.9em; color: #999;">
+            Мы используем Telegram для безопасной авторизации. <br>Пароли не требуются.
         </div>
+
     </div>
 </div>
