@@ -46,7 +46,7 @@ $this->title = 'Questable';
     <div class="container">
         <header class="header">
             <div class="avatar">
-                <img src="<?= $avatar_path ?>" alt="avatar">
+<!--                <img src="--><?php //= $avatar_path ?><!--" alt="avatar">-->
             </div>
             <div class="user-profile-section">
                 <div class="user-info">
@@ -58,7 +58,7 @@ $this->title = 'Questable';
                 </div>
             </div>
             <div class="logo" id="logoBtn">
-                <img src="<?= Html::encode($logo_path) ?>" alt="logo">
+<!--                <img src="--><?php //= Html::encode($logo_path) ?><!--" alt="logo">-->
             </div>
         </header>
 
@@ -108,46 +108,6 @@ $this->title = 'Questable';
                                 </div>
                             </div>
                         <?php endforeach; ?>
-
-                        <!-- для показа кудлису (потом удалить) -->
-                        <!-- TODO: имеется баг с картинками -->
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://s3.stroi-news.ru/img/krasivie-kartinki-peizazh-1.jpg" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 1</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://www.russiadiscovery.ru/storage/images/resized/posts/1493/poster/422/original_1220.jpg" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 2</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://cs8.pikabu.ru/post_img/big/2016/10/30/5/1477812607183074526.jpg" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 3</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-                        <div class="quest-card">
-                            <div class="card-img">
-                                <img src="https://kartin.papik.pro/uploads/posts/2023-06/thumbs/1686949622_kartin-papik-pro-p-kartinki-krasivie-s-zhivotnimi-s-tsvetami-37.jpg" alt="">
-                            </div>
-                            <div class="card-text">
-                                <h3>Тест 4</h3>
-                                <p>Описание</p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
                 <button class="slider-btn next-btn" id="promo-next-btn">&gt;</button>
