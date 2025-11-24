@@ -10,67 +10,95 @@ use yii\helpers\Url;
 $this->title = 'Редактирование: ' . $quest->name;
 ?>
 
-    <div class="container">
-        <div class="page-header">
-            <h2 class="section-title">Конструктор: <?= Html::encode($quest->name) ?></h2>
-            <div>
-                <a href="<?= Url::to(['index']) ?>" class="btn btn-secondary">Назад</a>
-                <a href="<?= Url::to(['delete', 'id' => $quest->id]) ?>" class="btn btn-danger" data-confirm="Удалить квест?">Удалить квест</a>
+    <div class="container py-4">
+        <!-- Заголовок страницы -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3 mb-0">Конструктор: <?= Html::encode($quest->name) ?></h2>
+            <div class="btn-group">
+                <a href="<?= Url::to(['index']) ?>" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Назад
+                </a>
+                <a href="<?= Url::to(['delete', 'id' => $quest->id]) ?>"
+                   class="btn btn-danger"
+                   data-confirm="Удалить квест?">
+                    <i class="fas fa-trash"></i> Удалить квест
+                </a>
             </div>
         </div>
 
-        <!-- Блок 1: Основная информация о квесте -->
-        <div class="quest-form-container">
-            <h3>Основные настройки</h3>
-            <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <?= $form->field($questForm, 'name')->label('Название') ?>
-                <?= $form->field($questForm, 'coverFile')->fileInput()->label('Сменить обложку') ?>
+        <!-- Блок 1: Основная информация о квесте (Card) -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">Основные настройки</h5>
             </div>
-            <?= $form->field($questForm, 'description')->textarea(['rows' => 2])->label('Описание') ?>
+            <div class="card-body">
+                <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
 
-            <?= Html::submitButton('Сохранить изменения', ['class' => 'btn btn-primary']) ?>
-            <?php ActiveForm::end(); ?>
+                <div class="row">
+                    <div class="col-md-6">
+                        <?= $form->field($questForm, 'name')->textInput(['class' => 'form-control'])->label('Название') ?>
+                    </div>
+                    <div class="col-md-6">
+                        <?= $form->field($questForm, 'coverFile')->fileInput(['class' => 'form-control'])->label('Сменить обложку') ?>
+                    </div>
+                </div>
+
+                <?= $form->field($questForm, 'description')->textarea(['rows' => 2, 'class' => 'form-control'])->label('Описание') ?>
+
+                <div class="mt-3">
+                    <?= Html::submitButton('<i class="fas fa-save"></i> Сохранить изменения', ['class' => 'btn btn-primary']) ?>
+                </div>
+
+                <?php ActiveForm::end(); ?>
+            </div>
         </div>
 
-        <!-- Блок 2: Станции -->
-        <div class="section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3 class="section-title" style="margin: 0;">Станции (Точки маршрута)</h3>
-                <button class="btn btn-primary" id="add-station-btn" data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id]) ?>">
+        <!-- Блок 2: Станции (Card + List Group) -->
+        <div class="card shadow-sm">
+            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                <h5 class="mb-0">Станции (Точки маршрута)</h5>
+                <button class="btn btn-success btn-sm" id="add-station-btn" data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id]) ?>">
                     <i class="fas fa-plus"></i> Добавить станцию
                 </button>
             </div>
 
-            <div class="stations-list">
+            <div class="list-group list-group-flush">
                 <?php if (empty($stations)): ?>
-                    <p class="not-set">В этом квесте пока нет станций. Добавьте первую!</p>
+                    <div class="list-group-item text-center text-muted py-4">
+                        В этом квесте пока нет станций. Добавьте первую!
+                    </div>
                 <?php else: ?>
                     <?php foreach ($stations as $station): ?>
-                        <div class="station-item">
-                            <div class="station-info">
-                                <h4><?= Html::encode($station->name) ?></h4>
-                                <span class="station-type-badge"><?= $station->type ?></span>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+
+                            <!-- Информация о станции -->
+                            <div class="ms-2 me-auto">
+                                <div class="fw-bold">
+                                    <?= Html::encode($station->name) ?>
+                                    <!-- Badge для типа -->
+                                    <span class="badge bg-info text-dark ms-2"><?= $station->type ?></span>
+                                </div>
                                 <?php if($station->type == 'quiz'): ?>
-                                    <small style="color: #666; margin-left: 10px;">
-                                        (Ответ: <?= json_decode($station->options, true)['correct_answer'] ?? '-' ?>)
+                                    <small class="text-muted">
+                                        Ответ: <?= json_decode($station->options, true)['correct_answer'] ?? '-' ?>
                                     </small>
                                 <?php endif; ?>
                             </div>
-                            <div class="station-actions">
-                                <!-- Кнопка QR -->
-                                <a href="<?= Url::to(['game/visit', 'qr' => $station->qr_identifier]) ?>" target="_blank" class="btn btn-secondary btn-sm" title="Тест игры">
-                                    <i class="fas fa-qrcode"></i> QR
+
+                            <!-- Кнопки действий -->
+                            <div class="btn-group btn-group-sm">
+                                <a href="<?= Url::to(['game/visit', 'qr' => $station->qr_identifier]) ?>" target="_blank" class="btn btn-outline-secondary" title="Тест QR">
+                                    <i class="fas fa-qrcode"></i>
                                 </a>
-                                <!-- Кнопка Редактировать (AJAX) -->
-                                <button class="btn btn-secondary btn-sm edit-station-btn"
-                                        data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id, 'id' => $station->id]) ?>">
+                                <button class="btn btn-outline-primary edit-station-btn"
+                                        data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id, 'id' => $station->id]) ?>"
+                                        title="Редактировать">
                                     <i class="fas fa-pen"></i>
                                 </button>
-                                <!-- Кнопка Удалить -->
                                 <a href="<?= Url::to(['delete-station', 'id' => $station->id]) ?>"
-                                   class="btn btn-danger btn-sm"
-                                   data-confirm="Вы уверены?">
+                                   class="btn btn-outline-danger"
+                                   data-confirm="Вы уверены?"
+                                   title="Удалить">
                                     <i class="fas fa-trash"></i>
                                 </a>
                             </div>
@@ -81,77 +109,71 @@ $this->title = 'Редактирование: ' . $quest->name;
         </div>
     </div>
 
-    <!-- Модальное окно для Станций (используем ту же структуру, что в layout, но отдельный ID) -->
-    <div id="station-modal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
-            <div class="modal-header">
-                <h2>Станция</h2>
-                <span class="close-modal-btn" id="close-station-modal">&times;</span>
-            </div>
-            <div class="modal-body" id="station-modal-body">
-                <!-- Сюда загрузится форма через AJAX -->
-                <div style="text-align: center;"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>
+    <!-- Стандартное Модальное окно Bootstrap -->
+    <div class="modal fade" id="station-modal" tabindex="-1" aria-labelledby="stationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- modal-lg для широкого окна -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="stationModalLabel">Станция</h5>
+                    <!-- Крестик закрытия (поддерживает и BS4 и BS5) -->
+                    <button type="button" class="btn-close close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" class="d-none d-sm-block">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" id="station-modal-body">
+                    <div class="text-center py-5">
+                        <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+                        <p class="mt-2">Загрузка...</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
 <?php
 $js = <<<JS
-    const stationModal = document.getElementById('station-modal');
-    const stationBody = $('#station-modal-body'); // Используем jQuery для тела
+    // Используем jQuery для управления модальным окном Bootstrap
     
-    function openStationModal(url) {
-        // 1. Открываем окно (добавляем класс CSS)
-        stationModal.classList.add('open');
-        
-        // 2. Показываем лоадер
-        stationBody.html('<div style="text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Загрузка...</div>');
-        
-        // 3. Загружаем форму через jQuery .load()
-        // Это автоматически выполнит все скрипты (ActiveForm), которые придут с сервера
-        stationBody.load(url, function(response, status, xhr) {
-            if (status == "error") {
-                stationBody.html('<div class="alert alert-danger">Ошибка загрузки: ' + xhr.status + ' ' + xhr.statusText + '</div>');
+    const stationModalId = '#station-modal';
+    const stationBodyId = '#station-modal-body';
+
+    function loadModalContent(url) {
+        const modalEl = $(stationModalId);
+        const bodyEl = $(stationBodyId);
+
+        // 1. Показываем модальное окно
+        modalEl.modal('show');
+
+        // 2. Сбрасываем контент на лоадер
+        bodyEl.html('<div class="text-center py-5"><i class="fas fa-spinner fa-spin fa-3x text-primary"></i><p class="mt-2">Загрузка...</p></div>');
+
+        // 3. Загружаем форму
+        bodyEl.load(url, function(response, status, xhr) {
+            if (status === "error") {
+                bodyEl.html('<div class="alert alert-danger">Ошибка загрузки: ' + xhr.status + ' ' + xhr.statusText + '</div>');
             }
         });
     }
 
-    function closeStationModal() {
-        stationModal.classList.remove('open');
-    }
-
-    // Открытие на создание
+    // Клик по "Добавить станцию"
     $('#add-station-btn').on('click', function(e) {
         e.preventDefault();
-        // Берем URL из data-атрибута кнопки
         let url = $(this).data('url');
-        openStationModal(url);
+        loadModalContent(url);
     });
 
-    // Открытие на редактирование (делегирование событий для динамических кнопок)
+    // Клик по "Редактировать" (делегирование)
     $(document).on('click', '.edit-station-btn', function(e) {
         e.preventDefault();
         let url = $(this).data('url');
-        openStationModal(url);
+        loadModalContent(url);
     });
-
-    // Закрытие по крестику
-    $('#close-station-modal').on('click', closeStationModal);
     
-    // Закрытие по клику вне окна (оверлей)
-    window.onclick = function(event) {
-        if (event.target == stationModal) {
-            closeStationModal();
-        }
-    }
-    
-    // Обработка отправки формы внутри модалки
-    // Мы слушаем submit на document, так как форма подгружается динамически
+    // AJAX отправка формы внутри модалки
     $(document).on('submit', '#station-active-form', function(e) {
         e.preventDefault();
         var form = $(this);
         
-        // Отправляем данные через AJAX
         $.ajax({
             url: form.attr('action'),
             type: 'post',
@@ -159,9 +181,14 @@ $js = <<<JS
             dataType: 'json',
             success: function(data) {
                 if(data.success) {
-                    location.reload(); // Перезагружаем страницу при успехе
+                    $(stationModalId).modal('hide'); // Закрываем модалку
+                    location.reload(); // Перезагружаем страницу
                 } else {
-                    alert('Ошибка сохранения. Проверьте правильность заполнения полей.');
+                    // Если сервер вернул ошибки валидации, Yii обычно перерисовывает форму сам, 
+                    // но если вы возвращаете JSON, то обработку ошибок нужно добавить здесь.
+                    // Для простоты предполагаем, что при ошибке renderAjax вернет HTML с ошибками,
+                    // но в текущем контроллере стоит редирект или JSON success.
+                    alert('Ошибка сохранения. Проверьте данные.');
                 }
             },
             error: function() {
@@ -171,7 +198,6 @@ $js = <<<JS
         
         return false;
     });
-
 JS;
 $this->registerJs($js);
 ?>

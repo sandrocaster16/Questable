@@ -6,22 +6,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.getElementById('close-btn');
     const overlay = document.getElementById('overlay');
 
-    function openSidebar() {
-        sidebar.classList.add('open');
-        overlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
+    if (sidebar && logoBtn && closeBtn && overlay) {
+        function openSidebar() {
+            sidebar.classList.add('open');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeSidebar() {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        logoBtn.addEventListener('click', openSidebar);
+        closeBtn.addEventListener('click', closeSidebar);
+        overlay.addEventListener('click', closeSidebar);
     }
-
-    function closeSidebar() {
-        sidebar.classList.remove('open');
-        overlay.classList.remove('active');
-        document.body.style.overflow = 'auto';
-    }
-
-    logoBtn.addEventListener('click', openSidebar);
-    closeBtn.addEventListener('click', closeSidebar);
-    overlay.addEventListener('click', closeSidebar);
-
 
     // --- Логика для модального окна настроек ---
     const settingsBtn = document.getElementById('settings-btn');
@@ -31,27 +32,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const avatarInput = document.getElementById('avatar-input');
     const avatarPreview = document.getElementById('avatar-preview');
 
-    function openSettingsModal() {
-        settingsModal.classList.add('open');
-    }
-
-    function closeSettingsModal() {
-        settingsModal.classList.remove('open');
-    }
-
-    settingsBtn.addEventListener('click', openSettingsModal);
-    closeModalBtn.addEventListener('click', closeSettingsModal);
-    cancelSettingsBtn.addEventListener('click', closeSettingsModal);
-
-    avatarInput.addEventListener('change', function() {
-        if (this.files && this.files[0]) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                avatarPreview.src = e.target.result;
-            }
-            reader.readAsDataURL(this.files[0]);
+    if (settingsBtn && settingsModal) {
+        function openSettingsModal() {
+            settingsModal.classList.add('open');
         }
-    });
+
+        function closeSettingsModal() {
+            settingsModal.classList.remove('open');
+        }
+
+        settingsBtn.addEventListener('click', openSettingsModal);
+
+        if (closeModalBtn) closeModalBtn.addEventListener('click', closeSettingsModal);
+        if (cancelSettingsBtn) cancelSettingsBtn.addEventListener('click', closeSettingsModal);
+
+        if (avatarInput && avatarPreview) {
+            avatarInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        avatarPreview.src = e.target.result;
+                    }
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        }
+    }
 
     // --- Логика для Слайдера с Авто-прокруткой ---
     function setupAutoSlider(trackId, prevBtnId, nextBtnId, interval = 5000) {

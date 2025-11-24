@@ -32,13 +32,13 @@ class AppAsset extends AssetBundle
         'plugins/jquery/jquery-3.7.1.min.js',
         'plugins/ckeditor/js/ckeditor.js',
         'plugins/ckeditor/js/ckeditor-translate-ru.js',
-        'metronic/js/plugins.bundle.js',
-        'metronic/js/scripts.bundle.js',
+//        'metronic/js/plugins.bundle.js',
+//        'metronic/js/scripts.bundle.js',
         'js/main.js',
 //        'js/common.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
-        'yii\bootstrap5\BootstrapAsset' // на удаление
+        'yii\bootstrap5\BootstrapPluginAsset',
     ];
 }
