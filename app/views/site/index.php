@@ -33,11 +33,9 @@ $this->title = 'Questable';
         <ul class="nav-links">
             <li><a href="/">Главная</a></li>
             <hr>
-            <li><a href="/quest/create">Создать квест</a></li>
+            <li><a href="/quest/index">Мои квесты</a></li>
             <hr>
-            <li><a href="/info">О проекте</a></li>
-
-            <!-- TODO: не будет отобрадаться у не админа -->
+            <li><a href="site/info">О проекте</a></li>
             <hr>
             <li><a href="/admin-panel">Админ панель</a></li>
         </ul>
