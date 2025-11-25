@@ -6,53 +6,33 @@ services:
     ports:
       - "30013:80"
     volumes:
-      # Кэш Composer для ускорения установки зависимостей
       - ~/.composer-docker/cache:/root/.composer/cache:delegated
-      # Синхронизация кода проекта
       - ./:/app
     networks:
       - questable
-    # Гарантирует, что 'app' запустится только после того,
-    # как база данных будет полностью готова принимать подключения
     depends_on:
-      mysql:
-        condition: service_healthy
+      - db_tunnel
 
-  mysql:
-    image: mariadb:11.4
-    restart: unless-stopped
-    ports:
-      - "3313:3306"
+  # наш туннель
+  db_tunnel:
+    image: alpine:latest
+    container_name: db_tunnel
+
+    # 1. устанавливаем SSH
+    # 2. копируем ключ и даем права 600
+    command: >
+      sh -c "apk add --no-cache openssh-client &&
+      mkdir -p /root/.ssh &&
+      cp /ssh_key_ro /root/.ssh/id_rsa &&
+      chmod 600 /root/.ssh/id_rsa &&
+      ssh -4 -i /root/.ssh/id_rsa -N -o StrictHostKeyChecking=no -o GatewayPorts=yes -L 0.0.0.0:3306:127.0.0.1:3306 sandrocaster@176.108.251.223"
     volumes:
-      # Сохраняет данные БД на вашем компьютере
-      - ./system/mysql:/var/lib/mysql
-    environment:
-      # Используем переменные из .env файла
-      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_NAME}
-      - MYSQL_USER=${DB_USER}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-      - MARIADB_AUTO_UPGRADE=1
-    networks:
-      - questable
-    # Проверка "здоровья" контейнера: готов ли он принимать подключения
-    healthcheck:
-      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost", "-u", "${DB_USER}", "-p${DB_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    ports:
-      - '8891:80'
-    environment:
-      - PMA_ARBITRARY=1
-      - PMA_HOST=mysql
+      # ключ из sshkey
+      - ./sshkey/project_key:/ssh_key_ro:ro
     networks:
       - questable
-    depends_on:
-      - mysql
+    restart: always
 
 networks:
   questable:

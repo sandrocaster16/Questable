@@ -2,6 +2,8 @@
 .env
 .DS_Store
 .idea
+qrcode/
+sshkey/
 
 # not us have
 _site/
