@@ -24,9 +24,8 @@ class AppAsset extends AssetBundle
         'metronic/css/plugins.bundle.css',
         'metronic/css/style.bundle.css',
         'plugins/ckeditor/css/styles.css',
-//        'css/fonts.css',
         'css/app.css',
-        'css/index.css', // временный общий файл
+        'css/style.css',
     ];
     public $js = [
         'plugins/jquery/jquery-3.7.1.min.js',
@@ -35,7 +34,8 @@ class AppAsset extends AssetBundle
 //        'metronic/js/plugins.bundle.js',
 //        'metronic/js/scripts.bundle.js',
         'js/main.js',
-//        'js/common.js',
+        'js/dark-mode.js',
+        'js/script.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

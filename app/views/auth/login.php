@@ -1,6 +1,6 @@
 <?php
 use yii\helpers\Url;
-
+$this->context->layout = false;
 $this->title = 'Вход в Questable';
 $botUsername = Yii::$app->params['telegramBotUsername'];
 $redirectUrl = Url::to(['auth/tg-callback'], true); // Абсолютный URL для коллбека

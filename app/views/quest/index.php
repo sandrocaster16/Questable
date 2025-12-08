@@ -1,46 +1,52 @@
 <?php
 use yii\helpers\Html;
 use yii\helpers\Url;
+use yii\helpers\StringHelper;
 
+/** @var $this yii\web\View */
 /** @var $quests app\models\Quests[] */
 
 $this->title = 'Мои квесты';
 ?>
 
-<div class="container">
-    <div class="page-header">
-        <h2 class="section-title" style="margin-bottom: 0;">Мои квесты</h2>
-        <a href="<?= Url::to(['create']) ?>" class="btn btn-primary">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Мои квесты</h2>
+        <a href="<?= Url::to(['create']) ?>" class="btn btn-success">
             <i class="fas fa-plus"></i> Создать новый
         </a>
     </div>
 
-    <hr>
-
     <?php if (empty($quests)): ?>
-        <div class="not-set" style="text-align: center; padding: 50px;">
-            <h3>У вас пока нет созданных квестов</h3>
-            <p>Нажмите кнопку "Создать новый", чтобы начать.</p>
+        <div class="card text-center p-5 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-muted">Список пуст</h3>
+                <p class="card-text">У вас пока нет активных квестов.</p>
+                <a href="<?= Url::to(['create']) ?>" class="btn btn-primary mt-3">Создать первый квест</a>
+            </div>
         </div>
     <?php else: ?>
-        <div class="history-grid">
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <?php foreach ($quests as $quest): ?>
-                <!-- Ссылка на редактирование оборачивает карточку -->
-                <a href="<?= Url::to(['update', 'id' => $quest->id]) ?>" style="text-decoration: none;">
-                    <div class="quest-card">
-                        <div class="card-img">
-                            <!-- Если нет картинки, ставим заглушку -->
-                            <img src="<?= $quest->cover_image_url ?: '/uploads/quest_previews/default.png' ?>" alt="">
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <?php
+                        $img = $quest->cover_image_url ?? '/uploads/quest_previews/default.png';
+                        ?>
+                        <div style="height: 200px; overflow: hidden; background: #f8f9fa;">
+                            <img src="<?= $img ?>" class="card-img-top" alt="<?= Html::encode($quest->name) ?>" style="object-fit: cover; height: 100%; width: 100%;">
                         </div>
-                        <div class="card-text">
-                            <h3><?= Html::encode($quest->name) ?></h3>
-                            <p><?= Html::encode($quest->description) ?></p>
-                            <div style="margin-top: auto; padding-top: 10px; color: var(--primary-color); font-weight: bold;">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title"><?= Html::encode($quest->name) ?></h5>
+                            <p class="card-text text-muted flex-grow-1">
+                                <?= Html::encode(StringHelper::truncateWords($quest->description, 10)) ?>
+                            </p>
+                            <a href="<?= Url::to(['update', 'id' => $quest->id]) ?>" class="btn btn-outline-primary mt-auto">
                                 <i class="fas fa-edit"></i> Редактировать
-                            </div>
+                            </a>
                         </div>
                     </div>
-                </a>
+                </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

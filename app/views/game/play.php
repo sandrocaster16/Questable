@@ -8,92 +8,120 @@ use yii\helpers\Markdown;
 /** @var $progress app\models\StationProgress|null */
 
 $this->title = $station->name;
-$isCompleted = $progress && $progress->status == 'completed';
+$isCompleted = $progress && $progress->status === 'completed';
+
+$quizData = [];
+$answersList = [];
+
+if ($station->type === 'quiz' && !empty($station->options)) {
+    $quizData = json_decode($station->options, true);
+    $answersList = $quizData['answers'] ?? [];
+}
 ?>
 
-<div class="container" style="padding-top: 20px; padding-bottom: 40px;">
-
-    <div class="game-container">
-        <div class="game-header">
-            <h2 style="margin: 0; font-size: 20px;"><?= Html::encode($station->name) ?></h2>
+<div class="container py-4" style="max-width: 600px;">
+    <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white rounded shadow-sm border">
+        <div>
+            <h6 class="text-uppercase text-muted mb-1" style="font-size: 0.7rem; letter-spacing: 1px;">Станция</h6>
+            <h1 class="h5 mb-0 fw-bold"><?= Html::encode($station->name) ?></h1>
         </div>
+        <div class="text-center ps-3 border-start">
+            <small class="text-muted d-block" style="font-size: 0.75rem;">Баллы</small>
+            <span class="badge bg-primary rounded-pill fs-6"><?= $participant->points ?? 0 ?></span>
+        </div>
+    </div>
 
-        <div class="game-content">
-            <!-- Флеш сообщения -->
-            <?php if (Yii::$app->session->hasFlash('success')): ?>
-                <div class="alert alert-success">
-                    <i class="fas fa-check-circle"></i> <?= Yii::$app->session->getFlash('success') ?>
-                </div>
-            <?php endif; ?>
-            <?php if (Yii::$app->session->hasFlash('error')): ?>
-                <div class="alert alert-danger">
-                    <i class="fas fa-times-circle"></i> <?= Yii::$app->session->getFlash('error') ?>
-                </div>
-            <?php endif; ?>
+    <?php if (Yii::$app->session->hasFlash('success')): ?>
+        <div class="alert alert-success d-flex align-items-center shadow-sm border-0 mb-4" role="alert">
+            <i class="fas fa-check-circle fs-3 me-3"></i>
+            <div><?= Yii::$app->session->getFlash('success') ?></div>
+        </div>
+    <?php endif; ?>
+    <?php if (Yii::$app->session->hasFlash('error')): ?>
+        <div class="alert alert-danger d-flex align-items-center shadow-sm border-0 mb-4" role="alert">
+            <i class="fas fa-times-circle fs-3 me-3"></i>
+            <div><?= Yii::$app->session->getFlash('error') ?></div>
+        </div>
+    <?php endif; ?>
 
-            <!-- Если станция пройдена -->
+    <div class="card shadow-sm border-0 overflow-hidden" style="border-radius: 16px;">
+        <div class="card-body p-4">
+            <div class="prose mb-4 text-break">
+                <?= Markdown::process($station->content) ?>
+            </div>
+
+            <hr class="my-4 opacity-25">
+
             <?php if ($isCompleted): ?>
-                <div style="text-align: center; padding: 20px;">
-                    <i class="fas fa-trophy" style="font-size: 60px; color: #ffc107; margin-bottom: 20px;"></i>
-                    <h3>Станция пройдена!</h3>
-                    <p>Вы молодцы. Ищите следующий QR-код.</p>
+
+                <div class="text-center py-3 animate__animated animate__fadeIn">
+                    <div class="mb-3">
+                        <i class="fas fa-star text-warning fa-4x drop-shadow"></i>
+                    </div>
+                    <h3 class="h4 text-success fw-bold">Задание выполнено!</h3>
+                    <p class="text-muted">Двигайтесь к следующей точке.</p>
                 </div>
 
-                <!-- Если НЕ пройдена -->
             <?php else: ?>
-
-                <!-- Контент задания -->
-                <div class="markdown-content">
-                    <?= Markdown::process($station->content) ?>
-                </div>
-
-                <hr>
-
-                <!-- Логика Квиза -->
                 <?php if ($station->type === 'quiz'): ?>
-                    <?php $options = json_decode($station->options, true)['options'] ?? []; ?>
-
-                    <form method="post" action="<?= Url::to(['submit-answer']) ?>">
-                        <input type="hidden" name="<?= Yii::$app->request->csrfParam; ?>" value="<?= Yii::$app->request->csrfToken; ?>" />
+                    <form method="post" action="<?= Url::to(['game/submit-answer']) ?>">
+                        <input type="hidden" name="<?= Yii::$app->request->csrfParam ?>" value="<?= Yii::$app->request->csrfToken ?>" />
                         <input type="hidden" name="station_id" value="<?= $station->id ?>">
 
-                        <h3>Выберите ответ:</h3>
-                        <div class="quiz-options">
-                            <?php foreach ($options as $idx => $opt): ?>
-                                <div style="position: relative;">
-                                    <input type="radio" name="answer" id="opt_<?= $idx ?>" value="<?= Html::encode($opt) ?>" class="quiz-input" required>
-                                    <label for="opt_<?= $idx ?>" class="quiz-label">
-                                        <?= Html::encode($opt) ?>
-                                    </label>
-                                </div>
+                        <p class="fw-bold mb-3">Выберите вариант ответа:</p>
+
+                        <div class="d-grid gap-2">
+                            <?php foreach ($answersList as $index => $answerText): ?>
+                                <input type="radio" class="btn-check" name="answer" id="opt_<?= $index ?>" value="<?= Html::encode($answerText) ?>" autocomplete="off" required>
+                                <label class="btn btn-outline-primary text-start p-3 fw-semibold" for="opt_<?= $index ?>" style="border-radius: 12px; border-width: 2px;">
+                                    <?= Html::encode($answerText) ?>
+                                </label>
                             <?php endforeach; ?>
                         </div>
 
-                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 15px; font-size: 18px;">
-                            Ответить
-                        </button>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold" style="border-radius: 12px;">
+                                Ответить
+                            </button>
+                        </div>
                     </form>
 
-                    <!-- Логика Инфо (должна была авто-комплитнуться, но на всякий случай кнопка) -->
-                <?php elseif ($station->type === 'info'): ?>
-                    <a href="<?= Url::to(['site/index']) ?>" class="btn btn-secondary" style="width: 100%;">Вернуться на главную</a>
-
                 <?php elseif ($station->type === 'curator_check'): ?>
-                    <div class="alert alert-warning">
-                        <i class="fas fa-user-clock"></i> Покажите экран куратору для подтверждения.
+                    <div class="text-center bg-light p-4 rounded-3 border border-warning border-2 border-dashed">
+                        <i class="fas fa-user-clock text-warning mb-3 fa-3x"></i>
+                        <h5 class="fw-bold">Требуется проверка</h5>
+                        <p class="mb-3 text-muted small">
+                            Покажите этот экран волонтеру. Он подтвердит выполнение задания.
+                        </p>
+                        <button onclick="location.reload()" class="btn btn-warning w-100 fw-bold">
+                            <i class="fas fa-sync-alt me-1"></i> Проверить статус
+                        </button>
                     </div>
-                    <!-- Здесь можно добавить кнопку "Обновить статус" для AJAX проверки -->
-                    <button onclick="location.reload()" class="btn btn-secondary" style="width: 100%;">Я проверил, обновить</button>
+
                 <?php endif; ?>
 
             <?php endif; ?>
-        </div>
 
-        <div class="game-footer">
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: #666;">
-                <span>Участник: <?= Html::encode($participant->user_id) // или username ?></span>
-                <span>Очки: <b><?= $participant->points ?></b></span>
-            </div>
         </div>
     </div>
+
+    <div class="text-center mt-4">
+        <a href="<?= Url::to(['site/index']) ?>" class="text-muted text-decoration-none small">
+            <i class="fas fa-arrow-left"></i> На главную
+        </a>
+    </div>
 </div>
+
+<style>
+    .prose img { max-width: 100%; height: auto; border-radius: 12px; margin: 10px 0; }
+    .prose p { margin-bottom: 1rem; line-height: 1.6; }
+    .drop-shadow { filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+
+    .btn-check:checked + .btn-outline-primary {
+        background-color: var(--bs-primary);
+        color: white;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(var(--bs-primary-rgb), 0.3);
+    }
+    .btn-outline-primary { transition: all 0.2s; }
+</style>

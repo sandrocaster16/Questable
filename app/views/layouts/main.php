@@ -27,55 +27,15 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <?php $this->head() ?>
     </head>
     <body class="d-flex flex-column h-100">
-    <?php $this->beginBody() ?>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <?php include 'header.php'; ?>
 
-<!--    <header id="header">-->
-<!--        --><?php
-//        NavBar::begin([
-//                'brandLabel' => Yii::$app->name,
-//                'brandUrl' => Yii::$app->homeUrl,
-//                'options' => ['class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top']
-//        ]);
-//        echo Nav::widget([
-//                'options' => ['class' => 'navbar-nav'],
-//                'items' => array_filter([
-//                        ['label' => 'Главная', 'url' => [Yii::$app->homeUrl]],
-//                        !Yii::$app->user->isGuest ? ['label' => 'Квесты', 'url' => ['/admin/quests/index']] : null,
-//                        !Yii::$app->user->isGuest ? ['label' => 'Вопросы', 'url' => ['/admin/quests-questions/index']] : null,
-//                        !Yii::$app->user->isGuest ? ['label' => 'Станции', 'url' => ['/admin/quests-stations/index']] : null,
-//                        !Yii::$app->user->isGuest ? ['label' => 'Пользователи', 'url' => ['/admin/quests-users/index']] : null,
-//                        Yii::$app->user->isGuest
-//                                ? ['label' => 'Войти', 'url' => ['/auth/login']]
-//                                : '<li class="nav-item">'
-//                                . Html::beginForm(['/auth/logout'])
-//                                . Html::submitButton(
-//                                        'Выйти (' . Yii::$app->user->identity->username . ')',
-//                                        ['class' => 'nav-link btn btn-link logout']
-//                                )
-//                                . Html::endForm()
-//                                . '</li>'
-//                ]),
-//        ]);
-//        NavBar::end();
-//        ?>
-<!--    </header>-->
+    <?php $this->beginBody() ?>
 
     <?php if (!empty($this->params['breadcrumbs'])): ?>
         <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
     <?php endif ?>
     <?= Alert::widget() ?>
     <?= $content ?>
-
-<!--    <footer id="footer" class="mt-auto py-3 bg-light">-->
-<!--        <div class="container">-->
-<!--            <div class="row">-->
-<!--                <div class="col-md-6">-->
-<!--                    &copy; --><?php //= Html::encode(Yii::$app->name) ?><!-- --><?php //= date('Y') ?>
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </footer>-->
 
     <?php $this->endBody() ?>
     </body>

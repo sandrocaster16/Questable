@@ -8,61 +8,36 @@ use yii\web\IdentityInterface;
 class User extends \yii\base\BaseObject implements IdentityInterface
 {
     public $id;
-    public $login;
-    public $password;
-    public $token = '';
+    public $username;
+    public $avatar_url;
+    public $role;
+    public $created_at;
+    public $deleted_at;
+    public $banned;
 
-    private $authKey;
+    public $password;
+    public $authKey;
+    public $accessToken;
 
     private static $admin = [
-        'id'       => null,
-        'login'    => null,
+        'id'       => 0,
+        'username' => null,
         'password' => null,
+        'role'     => Users::ROLE_ROOT,
     ];
-
-    public function __construct($config = [])
-    {
-        self::ensureAdminInit();
-        parent::__construct($config);
-    }
 
     public function init()
     {
         parent::init();
-        $this->authKey = hash('sha256', (string)$this->id . ':' . (string)$this->login);
-    }
-
-    public static function findIdentity($id)
-    {
-        self::ensureAdminInit();
-
-        if ((string)self::$admin['id'] === (string)$id) {
-            return new static([
-                'id'           => self::$admin['id'],
-                'login'        => self::$admin['login']
-            ]);
+        if ($this->authKey === null) {
+            $this->authKey = hash('sha256', (string)$this->id . ':' . (string)$this->username);
         }
-
-        $userAR = Users::findOne($id);
-        if ($userAR) {
-            return new static([
-                'id'           => $userAR->id,
-                'login'        => $userAR->username
-            ]);
-        }
-        return null;
-    }
-
-    public static function findIdentityByAccessToken($token, $type = null)
-    {
-        return null;
     }
 
     private static function ensureAdminInit(): void
     {
-        if (self::$admin['login'] === null) {
-            self::$admin['id'] = 0;
-            self::$admin['login'] = getenv('ADMIN_USERNAME') ?: 'admin';
+        if (self::$admin['username'] === null) {
+            self::$admin['username'] = getenv('ADMIN_USERNAME') ?: 'admin';
 
             $plain = getenv('ADMIN_PASSWORD') ?: null;
             self::$admin['password'] = $plain !== null
@@ -71,35 +46,51 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         }
     }
 
-    public static function findByUsername($login)
+    public static function findIdentity($id)
     {
         self::ensureAdminInit();
 
-        if (strcasecmp((string)(self::$admin['login'] ?? ''), (string)$login) === 0) {
+        if ((string)self::$admin['id'] === (string)$id) {
             return new static([
-                'id'           => self::$admin['id'],
-                'login'        => self::$admin['login']
+                'id'       => self::$admin['id'],
+                'username' => self::$admin['username'],
+                'role'     => self::$admin['role'],
             ]);
         }
 
-        $userAR = Users::find()->where(['login' => $login])->one();
+        $userAR = Users::findIdentity($id);
+
         if ($userAR) {
-            return new static([
-                'id'           => $userAR->id,
-                'login'        => $userAR->login
-            ]);
+            return new static($userAR->getAttributes());
         }
+
         return null;
     }
 
-    public function getUsername()
+    public static function findByUsername($username)
     {
-        return $this->login;
+        self::ensureAdminInit();
+
+        if (strcasecmp((string)(self::$admin['username'] ?? ''), (string)$username) === 0) {
+            return new static([
+                'id'       => self::$admin['id'],
+                'username' => self::$admin['username'],
+                'role'     => self::$admin['role'],
+            ]);
+        }
+
+        $userAR = Users::find()->where(['username' => $username])->one();
+
+        if ($userAR) {
+            return new static($userAR->getAttributes());
+        }
+
+        return null;
     }
 
-    public function setUsername($value)
+    public static function findIdentityByAccessToken($token, $type = null)
     {
-        $this->login = $value;
+        return null;
     }
 
     public function getId()
@@ -107,9 +98,14 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         return $this->id;
     }
 
+    public function getLogin()
+    {
+        return $this->username;
+    }
+
     public function getAuthKey()
     {
-        return null;
+        return $this->authKey;
     }
 
     public function validateAuthKey($authKey)
@@ -117,8 +113,18 @@ class User extends \yii\base\BaseObject implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
+    public function validatePassword($password)
+    {
+        if ($this->id === self::$admin['id']) {
+            return Yii::$app->security->validatePassword($password, self::$admin['password']);
+        }
+
+        return false;
+    }
+
     public function isAdmin(): bool
     {
-        return $this->id === self::$admin['id'];
+        return $this->id === self::$admin['id']
+            || $this->role === Users::ROLE_ADMIN;
     }
 }
