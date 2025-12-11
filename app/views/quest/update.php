@@ -8,10 +8,16 @@ use yii\helpers\Url;
 /** @var $stations app\models\QuestStations[] */
 
 $this->title = 'Редактирование: ' . $quest->name;
+
+// Формируем URL для QR кода (используем $quest->id, так как переменная называется $quest)
+$questUrl = Url::to(['site/view', 'id' => $quest->id], true);
+
+// Подключаем иконки и библиотеку QR кода
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/qrcode@1.5.4/qrcode.min.js', ['position' => \yii\web\View::POS_HEAD]);
 ?>
 
-    <!-- Добавляем локальные стили, чтобы не трогать глобальный CSS -->
+    <!-- Добавляем локальные стили -->
     <style>
         /* Базовый стиль красивой кнопки */
         .btn-nice {
@@ -20,14 +26,13 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
             justify-content: center;
             gap: 8px;
             padding: 10px 24px;
-            border-radius: 12px; /* Чуть меньше основного радиуса 14px */
+            border-radius: 12px;
             font-weight: 700;
             font-size: 14px;
             border: 2px solid transparent;
             transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
             cursor: pointer;
             text-decoration: none !important;
-            /* Сброс ширины 100% из вашего глобального .btn */
             width: auto !important;
             margin-top: 0 !important;
             line-height: 1.2;
@@ -35,7 +40,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
 
         .btn-nice:hover {
             transform: translateY(-3px);
-            box-shadow: var(--shadow-hover);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
         .btn-nice:active {
@@ -44,31 +49,42 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
 
         /* Главная кнопка (Сохранить) - Черная */
         .btn-nice-primary {
-            background: var(--text-main);
-            color: var(--primary-inv);
-            box-shadow: var(--shadow-base);
+            background: #212529;
+            color: #fff;
         }
         .btn-nice-primary:hover {
             opacity: 0.9;
-            color: var(--primary-inv);
+            color: #fff;
         }
 
         /* Вторичная кнопка (Назад) - Белая с рамкой */
         .btn-nice-secondary {
-            background: var(--bg-surface);
-            color: var(--text-main);
-            border: 2px solid var(--border);
+            background: #fff;
+            color: #212529;
+            border: 2px solid #dee2e6;
         }
         .btn-nice-secondary:hover {
-            border-color: var(--text-main);
-            background: var(--bg-surface);
-            color: var(--text-main);
+            border-color: #212529;
+            background: #fff;
+            color: #212529;
         }
 
-        /* Опасная кнопка (Удалить) - Белая с красным акцентом */
+        /* Кнопка QR кода - Синяя/Инфо */
+        .btn-nice-info {
+            background: #e7f1ff;
+            color: #0d6efd;
+            border: 2px solid #cff4fc;
+        }
+        .btn-nice-info:hover {
+            background: #0d6efd;
+            color: #fff;
+            border-color: #0d6efd;
+        }
+
+        /* Опасная кнопка (Удалить) */
         .btn-nice-danger {
-            background: var(--bg-surface);
-            color: #dc2626; /* Красный оттенок */
+            background: #fff;
+            color: #dc2626;
             border: 2px solid #fee2e2;
         }
         .btn-nice-danger:hover {
@@ -77,15 +93,15 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
             color: #dc2626;
         }
 
-        /* Кнопка добавления - Пунктирная или Акцентная */
+        /* Кнопка добавления */
         .btn-nice-add {
-            background: var(--bg-surface);
-            color: var(--text-main);
-            border: 2px dashed var(--text-main);
+            background: #fff;
+            color: #212529;
+            border: 2px dashed #212529;
         }
         .btn-nice-add:hover {
-            background: var(--text-main);
-            color: var(--primary-inv);
+            background: #212529;
+            color: #fff;
             border-style: solid;
         }
 
@@ -97,14 +113,14 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid var(--border);
-            background: var(--bg-surface);
-            color: var(--text-secondary);
+            border: 1px solid #dee2e6;
+            background: #fff;
+            color: #6c757d;
             transition: 0.2s;
         }
         .btn-icon-action:hover {
-            border-color: var(--text-main);
-            color: var(--text-main);
+            border-color: #212529;
+            color: #212529;
             transform: scale(1.1);
         }
         .btn-icon-action.delete:hover {
@@ -112,22 +128,28 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
             color: #dc2626;
         }
 
-        /* Правки сетки хедера */
         .header-actions {
             display: flex;
             gap: 12px;
+            flex-wrap: wrap;
         }
     </style>
 
     <div class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <h2 class="h3 mb-0 fw-bold">Конструктор: <?= Html::encode($quest->name) ?></h2>
 
-            <!-- Обновленные кнопки навигации -->
+            <!-- Кнопки навигации -->
             <div class="header-actions">
                 <a href="<?= Url::to(['index']) ?>" class="btn-nice btn-nice-secondary">
                     <i class="fas fa-arrow-left"></i> Назад
                 </a>
+
+                <!-- Кнопка вызова QR кода -->
+                <button type="button" class="btn-nice btn-nice-info" data-bs-toggle="modal" data-bs-target="#qrCodeModal">
+                    <i class="fas fa-qrcode"></i> QR код
+                </button>
+
                 <a href="<?= Url::to(['delete', 'id' => $quest->id]) ?>"
                    class="btn-nice btn-nice-danger"
                    data-confirm="Вы уверены, что хотите удалить этот квест?"
@@ -138,7 +160,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
         </div>
 
         <!-- Блок 1: Основная информация -->
-        <div class="card mb-4 shadow-sm" style="border-radius: var(--border-radius); border: 1px solid var(--border); overflow: hidden;">
+        <div class="card mb-4 shadow-sm" style="border-radius: 12px; border: 1px solid #dee2e6; overflow: hidden;">
             <div class="card-header bg-white border-bottom">
                 <h5 class="mb-0 fw-bold">Основные настройки</h5>
             </div>
@@ -147,18 +169,16 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <?= $form->field($questForm, 'name')->textInput(['class' => 'form-control input-field'])->label('Название') ?>
+                        <?= $form->field($questForm, 'name')->textInput(['class' => 'form-control'])->label('Название') ?>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <!-- Стилизация инпута файла через Bootstrap класс, но можно добавить input-field -->
-                        <?= $form->field($questForm, 'coverFile')->fileInput(['class' => 'form-control input-field'])->label('Сменить обложку') ?>
+                        <?= $form->field($questForm, 'coverFile')->fileInput(['class' => 'form-control'])->label('Сменить обложку') ?>
                     </div>
                 </div>
 
-                <?= $form->field($questForm, 'description')->textarea(['rows' => 2, 'class' => 'form-control input-field'])->label('Описание') ?>
+                <?= $form->field($questForm, 'description')->textarea(['rows' => 2, 'class' => 'form-control'])->label('Описание') ?>
 
                 <div class="mt-4">
-                    <!-- Кнопка сохранения -->
                     <?= Html::submitButton('<i class="fas fa-save"></i> Сохранить изменения', ['class' => 'btn-nice btn-nice-primary']) ?>
                 </div>
 
@@ -167,10 +187,9 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
         </div>
 
         <!-- Блок 2: Станции -->
-        <div class="card shadow-sm" style="border-radius: var(--border-radius); border: 1px solid var(--border); overflow: hidden;">
+        <div class="card shadow-sm" style="border-radius: 12px; border: 1px solid #dee2e6; overflow: hidden;">
             <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom p-3">
                 <h5 class="mb-0 fw-bold">Станции</h5>
-                <!-- Кнопка добавления -->
                 <button class="btn-nice btn-nice-add" id="add-station-btn" data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id]) ?>">
                     <i class="fas fa-plus"></i> Добавить станцию
                 </button>
@@ -179,7 +198,7 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
             <div class="list-group list-group-flush">
                 <?php if (empty($stations)): ?>
                     <div class="list-group-item text-center text-muted py-5 border-0">
-                        <div style="width: 80px; height: 80px; background: var(--bg-element); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                        <div style="width: 80px; height: 80px; background: #f8f9fa; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                             <i class="fas fa-map-marker-alt fa-2x text-secondary"></i>
                         </div>
                         <p>В этом квесте пока нет станций.<br>Нажмите "Добавить станцию", чтобы создать первую точку.</p>
@@ -207,7 +226,6 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
                                 <?php endif; ?>
                             </div>
 
-                            <!-- Маленькие кнопки действий -->
                             <div class="d-flex gap-2">
                                 <button class="btn-icon-action edit-station-btn"
                                         data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id, 'id' => $station->id]) ?>"
@@ -229,10 +247,10 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
         </div>
     </div>
 
-    <!-- Модальное окно (оставил как было, только Bootstrap классы) -->
+    <!-- Модальное окно для станций -->
     <div class="modal fade" id="station-modal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg" style="border-radius: var(--border-radius);">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
                 <div class="modal-header border-bottom-0 pb-0">
                     <h5 class="modal-title fw-bold">Редактирование станции</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -242,12 +260,41 @@ $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.
         </div>
     </div>
 
+    <!-- Модальное окно для QR кода -->
+    <div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content" style="border-radius: 12px;">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold" id="qrCodeModalLabel">QR код для квеста</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="text-muted mb-3">Отсканируйте QR код, чтобы открыть квест</p>
+                    <div id="qrcode" class="mb-3" style="display: flex; justify-content: center;"></div>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="questUrlInput" value="<?= Html::encode($questUrl) ?>" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="copyUrl(this)">
+                            <i class="fas fa-copy"></i> Копировать
+                        </button>
+                    </div>
+                    <button class="btn btn-success" onclick="downloadQR()">
+                        <i class="fas fa-download"></i> Скачать QR код
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 <?php
+// Передаем переменную PHP в JS
+$jsData = json_encode($questUrl);
+$questId = $quest->id;
+
 $js = <<<JS
+    // === ЛОГИКА СТАНЦИЙ ===
     const modalEl = new bootstrap.Modal(document.getElementById('station-modal'));
     const bodyEl = $('#station-modal-body');
 
-    // Открытие модалки
     $(document).on('click', '#add-station-btn, .edit-station-btn', function(e) {
         e.preventDefault();
         let url = $(this).data('url');
@@ -259,12 +306,11 @@ $js = <<<JS
             if (status === "error") {
                 bodyEl.html('<div class="alert alert-danger">Ошибка: ' + xhr.status + '</div>');
             } else {
-                toggleQuizBlock(); // Инициализация состояния
+                toggleQuizBlock();
             }
         });
     });
 
-    // Логика переключения типа
     $(document).on('change', '#station-type-select', function() {
         toggleQuizBlock();
     });
@@ -272,10 +318,11 @@ $js = <<<JS
     function toggleQuizBlock() {
         const type = $('#station-type-select').val();
         const quizBlock = $('#quiz-block');
-        type === 'quiz' ? quizBlock.slideDown() : quizBlock.slideUp();
+        if(quizBlock.length) {
+            type === 'quiz' ? quizBlock.slideDown() : quizBlock.slideUp();
+        }
     }
     
-    // AJAX отправка
     $(document).on('submit', '#station-active-form', function(e) {
         e.preventDefault();
         var form = $(this);
@@ -302,6 +349,80 @@ $js = <<<JS
         });
         return false;
     });
+
+    // === ЛОГИКА QR КОДА ===
+    let qrCodeCanvas = null;
+    const questUrl = {$jsData};
+    const questId = {$questId};
+
+    const qrModalEl = document.getElementById('qrCodeModal');
+    
+    // Генерируем QR код при открытии модального окна
+    qrModalEl.addEventListener('shown.bs.modal', function () {
+        const qrcodeDiv = document.getElementById('qrcode');
+        
+        // Если QR код уже сгенерирован (canvas существует), не пересоздаем его, чтобы не дублировать
+        if (qrcodeDiv.querySelector('canvas')) {
+            return;
+        }
+        
+        qrcodeDiv.innerHTML = ''; // Очистка на всякий случай
+        
+        const canvas = document.createElement('canvas');
+        qrcodeDiv.appendChild(canvas);
+        
+        if (typeof QRCode === 'undefined') {
+            qrcodeDiv.innerHTML = '<div class="alert alert-warning">Библиотека QR кода не загружена</div>';
+            return;
+        }
+
+        QRCode.toCanvas(canvas, questUrl, {
+            width: 300,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            },
+            errorCorrectionLevel: 'M'
+        }, function (error) {
+            if (error) {
+                console.error('Ошибка генерации QR кода:', error);
+                qrcodeDiv.innerHTML = '<div class="alert alert-danger">Ошибка генерации QR кода</div>';
+            } else {
+                qrCodeCanvas = canvas;
+            }
+        });
+    });
+
+    // Делаем функции глобальными, чтобы работали onclick в HTML
+    window.copyUrl = function(btnElement) {
+        const input = document.getElementById('questUrlInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        document.execCommand('copy');
+        
+        const originalText = btnElement.innerHTML;
+        btnElement.innerHTML = '<i class="fas fa-check"></i> Скопировано!';
+        btnElement.classList.remove('btn-outline-secondary');
+        btnElement.classList.add('btn-success');
+        
+        setTimeout(function() {
+            btnElement.innerHTML = originalText;
+            btnElement.classList.remove('btn-success');
+            btnElement.classList.add('btn-outline-secondary');
+        }, 2000);
+    }
+
+    window.downloadQR = function() {
+        if (!qrCodeCanvas) {
+            alert('QR код еще не сгенерирован');
+            return;
+        }
+        const link = document.createElement('a');
+        link.download = 'quest-qr-' + questId + '.png';
+        link.href = qrCodeCanvas.toDataURL('image/png');
+        link.click();
+    }
 JS;
 $this->registerJs($js);
 ?>

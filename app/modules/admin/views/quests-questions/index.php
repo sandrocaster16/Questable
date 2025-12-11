@@ -13,14 +13,21 @@ use yii\widgets\Pjax;
 
 $this->title = 'Quests Questions';
 $this->params['breadcrumbs'][] = $this->title;
+$this->registerCssFile('@web/css/admin-enhancements.css');
 ?>
 <div class="quests-questions-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mb-0">
+            <i class="fas fa-question-circle text-primary"></i> <?= Html::encode($this->title) ?>
+        </h1>
+        <?= Html::a('<i class="fas fa-plus"></i> Создать вопрос', ['create'], ['class' => 'btn btn-success']) ?>
+    </div>
 
-    <p>
-        <?= Html::a('Create Quests Questions', ['create'], ['class' => 'btn btn-success']) ?>
-    </p>
+    <div class="alert alert-light border-start border-primary border-4 mb-4">
+        <i class="fas fa-info-circle text-primary"></i> 
+        <strong>Управление вопросами:</strong> Создавайте и редактируйте вопросы для станций квестов.
+    </div>
 
     <?php Pjax::begin(); ?>
 
@@ -33,6 +40,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'filterModel' => $searchModel,
+        'pager' => [
+            'class' => 'yii\widgets\LinkPager',
+            'options' => ['class' => 'pagination justify-content-center'],
+            'linkOptions' => ['class' => 'page-link'],
+            'activePageCssClass' => 'active',
+            'disabledPageCssClass' => 'disabled',
+            'prevPageCssClass' => 'page-item',
+            'nextPageCssClass' => 'page-item',
+            'firstPageCssClass' => 'page-item',
+            'lastPageCssClass' => 'page-item',
+        ],
+        'layout' => "{summary}\n<div class='table-responsive'>{items}</div>\n{pager}",
+        'summary' => '<div class="alert alert-info mb-3"><i class="fas fa-info-circle"></i> Показано <strong>{begin}-{end}</strong> из <strong>{totalCount}</strong> вопросов</div>',
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
@@ -51,18 +71,6 @@ $this->params['breadcrumbs'][] = $this->title;
                  }
             ],
         ],
-            'pager' => [
-                'class' => LinkPager::class,
-                'options' => ['class' => 'pagination pagination-sm justify-content-center'],
-                'linkContainerOptions' => ['class' => 'page-item'],
-                'linkOptions' => ['class' => 'page-link', 'data-pjax' => 1],
-                'firstPageLabel' => '«',
-                'prevPageLabel'  => '‹',
-                'nextPageLabel'  => '›',
-                'lastPageLabel'  => '»',
-                'maxButtonCount' => 8,
-                'hideOnSinglePage' => true,
-            ],
     ]); ?>
 
     <?php Pjax::end(); ?>

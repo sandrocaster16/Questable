@@ -9,6 +9,7 @@ use yii\web\ForbiddenHttpException;
 use app\models\QuestStations;
 use app\models\QuestParticipants;
 use app\models\StationProgress;
+use app\core\services\QuestProgressService;
 
 class GameController extends Controller
 {
@@ -38,27 +39,33 @@ class GameController extends Controller
             $participant->role = 'player';
             $participant->points = 0;
             $participant->created_at = date('Y-m-d H:i:s');
-            $participant->save();
+            if ($participant->save()) {
+                // Инициализируем прогресс для нового участника
+                $progressService = new QuestProgressService();
+                $progressService->initializeProgress($participant);
+            }
         }
 
-        if ($participant->banned) {
+        if ($participant->isBanned()) {
             throw new ForbiddenHttpException('Вы дисквалифицированы из этого квеста.');
         }
 
-        $progress = StationProgress::findOne([
-            'participant_id' => $participant->id,
-            'station_id' => $station->id
-        ]);
+        // Получаем прогресс участника
+        $progressService = new QuestProgressService();
+        $questProgress = $participant->getProgress();
 
-        if ($station->type === 'info' && !$progress) {
-            $this->createProgress($participant, $station, 5);
-            $progress = StationProgress::findOne(['participant_id' => $participant->id, 'station_id' => $station->id]);
+        // Если станция типа info и еще не пройдена - автоматически отмечаем как пройденную
+        $progress = $participant->getStationProgress($station->id);
+        if ($station->type === QuestStations::TYPE_INFO && (!$progress || !$progress->isStatusCompleted())) {
+            $progressService->completeStation($participant, $station, 5);
+            $progress = $participant->getStationProgress($station->id);
         }
 
         return $this->render('play', [
             'station' => $station,
             'participant' => $participant,
-            'progress' => $progress
+            'progress' => $progress,
+            'questProgress' => $questProgress,
         ]);
     }
 
@@ -83,17 +90,12 @@ class GameController extends Controller
             'quest_id' => $station->quest_id
         ]);
 
-        if (!$participant || $participant->banned) {
+        if (!$participant || $participant->isBanned()) {
             throw new ForbiddenHttpException('Доступ запрещен');
         }
 
-        $existingProgress = StationProgress::findOne([
-            'participant_id' => $participant->id,
-            'station_id' => $station->id,
-            'status' => 'completed'
-        ]);
-
-        if ($existingProgress) {
+        // Проверяем, не пройдена ли уже станция
+        if ($participant->hasCompletedStation($station->id)) {
             Yii::$app->session->setFlash('info', 'Вы уже ответили на этот вопрос.');
             return $this->redirect(['visit', 'qr' => $station->qr_identifier]);
         }
@@ -101,18 +103,19 @@ class GameController extends Controller
         $options = json_decode($station->options, true);
         $correctAnswer = $options['correct_answer'] ?? '';
 
+        $progressService = new QuestProgressService();
+
         if ($userAnswer === $correctAnswer) {
-
-            $progress = new StationProgress();
-            $progress->participant_id = $participant->id;
-            $progress->station_id = $station->id;
-            $progress->status = 'completed';
-            $progress->completed_at = date('Y-m-d H:i:s');
-
-            if ($progress->save()) {
-                $participant->updateCounters(['points' => 10]);
-
-                Yii::$app->session->setFlash('success', 'Верно! +10 баллов.');
+            $progress = $progressService->completeStation($participant, $station, 10);
+            
+            if ($progress) {
+                // Проверяем, завершен ли квест
+                if ($participant->isQuestCompleted()) {
+                    Yii::$app->session->setFlash('success', 'Верно! +10 баллов. Поздравляем! Квест завершен!');
+                    return $this->redirect(['completion', 'quest_id' => $station->quest_id]);
+                } else {
+                    Yii::$app->session->setFlash('success', 'Верно! +10 баллов.');
+                }
             }
         } else {
             Yii::$app->session->setFlash('error', 'Ошибка! Попробуйте еще раз.');
@@ -120,32 +123,129 @@ class GameController extends Controller
 
         return $this->redirect(['visit', 'qr' => $station->qr_identifier]);
     }
+    /**
+     * Подтверждение прохождения станции куратором
+     * @param int $station_id
+     * @param int $participant_id
+     * @return \yii\web\Response
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
     public function actionCuratorApprove($station_id, $participant_id)
     {
-    }
-
-    private function createProgress($participant, $station, $pointsToAdd = 0)
-    {
-        $progress = new StationProgress();
-        $progress->participant_id = $participant->id;
-        $progress->station_id = $station->id;
-        $progress->status = 'completed';
-        $progress->completed_at = date('Y-m-d H:i:s');
-
-        if ($progress->save()) {
-            if ($pointsToAdd > 0) {
-                $participant->points += $pointsToAdd;
-                $participant->save(false);
-            }
+        $station = QuestStations::findOne($station_id);
+        if (!$station) {
+            throw new NotFoundHttpException('Станция не найдена');
         }
+
+        $participant = QuestParticipants::findOne($participant_id);
+        if (!$participant || $participant->quest_id !== $station->quest_id) {
+            throw new NotFoundHttpException('Участник не найден');
+        }
+
+        // Проверяем права (только кураторы/владельцы квеста)
+        $currentUserParticipant = QuestParticipants::findOne([
+            'user_id' => Yii::$app->user->id,
+            'quest_id' => $station->quest_id
+        ]);
+
+        if (!$currentUserParticipant || 
+            !in_array($currentUserParticipant->role, [QuestParticipants::ROLE_OWNER, QuestParticipants::ROLE_VOLUNTEER])) {
+            throw new ForbiddenHttpException('У вас нет прав для подтверждения прохождения станций');
+        }
+
+        if ($station->type !== QuestStations::TYPE_CURATOR_CHECK) {
+            Yii::$app->session->setFlash('error', 'Эта станция не требует подтверждения куратором');
+            return $this->redirect(Yii::$app->request->referrer ?: ['quest/index']);
+        }
+
+        $progressService = new QuestProgressService();
+        $progress = $progressService->completeStation($participant, $station, 10);
+
+        if ($progress) {
+            // Проверяем, завершен ли квест
+            if ($participant->isQuestCompleted()) {
+                Yii::$app->session->setFlash('success', 'Прохождение станции подтверждено. +10 баллов. Поздравляем! Квест завершен!');
+                return $this->redirect(['completion', 'quest_id' => $station->quest_id]);
+            } else {
+                Yii::$app->session->setFlash('success', 'Прохождение станции подтверждено. +10 баллов.');
+            }
+        } else {
+            Yii::$app->session->setFlash('error', 'Ошибка при подтверждении прохождения');
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?: ['quest/index']);
     }
 
-    private function hasCompleted($participantId, $stationId)
+    /**
+     * Получить прогресс участника по квесту (API endpoint)
+     * @param int $quest_id
+     * @return \yii\web\Response
+     */
+    public function actionProgress($quest_id)
     {
-        return StationProgress::find()->where([
-            'participant_id' => $participantId,
-            'station_id' => $stationId,
-            'status' => 'completed'
-        ])->exists();
+        if (Yii::$app->user->isGuest) {
+            throw new ForbiddenHttpException('Необходима авторизация');
+        }
+
+        $participant = QuestParticipants::findOne([
+            'user_id' => Yii::$app->user->id,
+            'quest_id' => $quest_id
+        ]);
+
+        if (!$participant) {
+            throw new NotFoundHttpException('Участник не найден');
+        }
+
+        $progress = $participant->getProgress();
+
+        if (Yii::$app->request->isAjax) {
+            return $this->asJson($progress);
+        }
+
+        return $this->render('progress', [
+            'progress' => $progress,
+        ]);
+    }
+
+    /**
+     * Страница завершения квеста
+     * @param int $quest_id
+     * @return string
+     * @throws ForbiddenHttpException
+     * @throws NotFoundHttpException
+     */
+    public function actionCompletion($quest_id)
+    {
+        if (Yii::$app->user->isGuest) {
+            throw new ForbiddenHttpException('Необходима авторизация');
+        }
+
+        $quest = Quests::findOne($quest_id);
+        if (!$quest) {
+            throw new NotFoundHttpException('Квест не найден');
+        }
+
+        $participant = QuestParticipants::findOne([
+            'user_id' => Yii::$app->user->id,
+            'quest_id' => $quest_id
+        ]);
+
+        if (!$participant) {
+            throw new NotFoundHttpException('Участник не найден');
+        }
+
+        $progress = $participant->getProgress();
+
+        // Проверяем, действительно ли квест завершен
+        if (!$progress['is_completed']) {
+            return $this->redirect(['progress', 'quest_id' => $quest_id]);
+        }
+
+        return $this->render('completion', [
+            'quest' => $quest,
+            'participant' => $participant,
+            'progress' => $progress,
+        ]);
     }
 }

@@ -7,6 +7,7 @@
 /** @var array $user_history */
 
 use yii\helpers\Html;
+use yii\helpers\Url;
 
 $this->title = 'Questable';
 ?>
@@ -30,18 +31,20 @@ $this->title = 'Questable';
             <div class="cards-track" id="promo-track">
                 <!-- квестики -->
                 <?php foreach ($popular_quests as $quest): ?>
-                    <div class="quest-card">
-                        <div class="card-img">
-                            <img src="<?= $quest['cover_image_url'] ?>" alt="">
-                        </div>
-                        <div class="card-text">
-                            <h3> <?= $quest['name'] ?> </h3>
-                            <p> <?= $quest['description'] ?> </p>
+                    <a href="<?= Url::to(['site/view', 'id' => $quest['id']]) ?>" style="text-decoration: none; color: inherit;">
+                        <div class="quest-card">
+                            <div class="card-img">
+                                <img src="<?= Html::encode($quest['cover_image_url'] ?? '') ?>" alt="<?= Html::encode($quest['name']) ?>">
+                            </div>
+                            <div class="card-text">
+                                <h3> <?= Html::encode($quest['name']) ?> </h3>
+                                <p> <?= Html::encode(mb_substr($quest['description'] ?? '', 0, 100)) ?><?= mb_strlen($quest['description'] ?? '') > 100 ? '...' : '' ?> </p>
 <!--                            <div class="card-footer">-->
 <!--                                <span class="rating"><i class="fas fa-star"></i> --><?php //= $quest['rating'] ?><!--</span>-->
 <!--                            </div>-->
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -65,18 +68,20 @@ $this->title = 'Questable';
         <!-- если есть, то обрезка до 6 -->
         <div class="grid-container">
             <?php foreach(array_slice($user_history, 0, 6) as $user_historyquest): ?>
-                <div class="quest-card">
-                    <div class="card-img">
-                        <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="">
-                    </div>
-                    <div class="card-text">
-                        <h3> <?= $user_historyquest['name'] ?> </h3>
-                        <p> <?= $user_historyquest['description'] ?> </p>
+                <a href="<?= Url::to(['site/view', 'id' => $user_historyquest['id']]) ?>" style="text-decoration: none; color: inherit;">
+                    <div class="quest-card">
+                        <div class="card-img">
+                            <img src="<?= Html::encode($user_historyquest['cover_image_url'] ?? '') ?>" alt="<?= Html::encode($user_historyquest['name']) ?>">
+                        </div>
+                        <div class="card-text">
+                            <h3> <?= Html::encode($user_historyquest['name']) ?> </h3>
+                            <p> <?= Html::encode(mb_substr($user_historyquest['description'] ?? '', 0, 100)) ?><?= mb_strlen($user_historyquest['description'] ?? '') > 100 ? '...' : '' ?> </p>
 <!--                        <div class="card-footer">-->
 <!--                            <span class="rating"><i class="fas fa-star"></i> --><?php //= $user_historyquest['rating'] ?><!--</span>-->
 <!--                        </div>-->
+                        </div>
                     </div>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

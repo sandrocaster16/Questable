@@ -175,4 +175,119 @@ class QuestParticipants extends \yii\db\ActiveRecord
     {
         $this->role = self::ROLE_PLAYER;
     }
+
+    /**
+     * Получить прогресс участника по квесту
+     * @return array
+     */
+    public function getProgress()
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getParticipantProgress($this);
+    }
+
+    /**
+     * Получить количество пройденных станций
+     * @return int
+     */
+    public function getCompletedStationsCount()
+    {
+        return StationProgress::find()
+            ->where(['participant_id' => $this->id])
+            ->andWhere(['status' => StationProgress::STATUS_COMPLETED])
+            ->count();
+    }
+
+    /**
+     * Получить общее количество станций в квесте
+     * @return int
+     */
+    public function getTotalStationsCount()
+    {
+        return QuestStations::find()
+            ->where(['quest_id' => $this->quest_id])
+            ->andWhere(['deleted_at' => null])
+            ->count();
+    }
+
+    /**
+     * Получить процент выполнения квеста
+     * @return float
+     */
+    public function getProgressPercentage()
+    {
+        $total = $this->getTotalStationsCount();
+        if ($total === 0) {
+            return 0;
+        }
+        $completed = $this->getCompletedStationsCount();
+        return round(($completed / $total) * 100, 2);
+    }
+
+    /**
+     * Проверить, завершен ли квест
+     * @return bool
+     */
+    public function isQuestCompleted()
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->isQuestCompleted($this);
+    }
+
+    /**
+     * Получить следующую доступную станцию
+     * @return QuestStations|null
+     */
+    public function getNextStation()
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getNextAvailableStation($this);
+    }
+
+    /**
+     * Проверить, пройдена ли конкретная станция
+     * @param int $stationId
+     * @return bool
+     */
+    public function hasCompletedStation($stationId)
+    {
+        return StationProgress::find()
+            ->where([
+                'participant_id' => $this->id,
+                'station_id' => $stationId,
+                'status' => StationProgress::STATUS_COMPLETED
+            ])
+            ->exists();
+    }
+
+    /**
+     * Получить прогресс по конкретной станции
+     * @param int $stationId
+     * @return StationProgress|null
+     */
+    public function getStationProgress($stationId)
+    {
+        return StationProgress::findOne([
+            'participant_id' => $this->id,
+            'station_id' => $stationId
+        ]);
+    }
+
+    /**
+     * Проверить, забанен ли участник
+     * @return bool
+     */
+    public function isBanned()
+    {
+        return $this->banned !== null;
+    }
 }

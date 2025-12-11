@@ -191,6 +191,7 @@ h1, h2, h3, h4 {
 }
 
 /* quests */
+a .quest-card,
 .quest-card {
     flex: 0 0 var(--card-width);
     width: var(--card-width);
@@ -207,9 +208,17 @@ h1, h2, h3, h4 {
     cursor: pointer;
 }
 
+a .quest-card:hover,
 .quest-card:hover {
     box-shadow: var(--shadow-hover);
+    transform: translateY(-5px);
     /*border-color: var(--border-hover);*/
+}
+
+a .quest-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .card-img {
