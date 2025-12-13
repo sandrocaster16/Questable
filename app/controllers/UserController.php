@@ -9,6 +9,8 @@ use app\models\Users;
 use Yii;
 use yii\web\Controller;
 use yii\web\UploadedFile;
+use yii\captcha\CaptchaAction;
+use yii\web\ErrorAction;
 
 class UserController extends Controller
 {
@@ -19,10 +21,10 @@ class UserController extends Controller
     {
         return [
             'error' => [
-                'class' => 'yii\web\ErrorAction',
+                'class' => ErrorAction::class,
             ],
             'captcha' => [
-                'class' => 'yii\captcha\CaptchaAction',
+                'class' => CaptchaAction::class,
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
         ];
@@ -37,14 +39,12 @@ class UserController extends Controller
 
         $model = new ProfileForm($user);
 
-        // Обработка отправки формы
         if ($model->load(Yii::$app->request->post())) {
-            // Получаем файл
             $model->avatar = UploadedFile::getInstance($model, 'avatar');
 
             if ($model->save()) {
                 Yii::$app->session->setFlash('success', 'Профиль успешно обновлен!');
-                return $this->refresh(); // Перезагружаем страницу, чтобы сбросить POST данные
+                return $this->refresh();
             } else {
                 Yii::$app->session->setFlash('error', 'Ошибка при сохранении профиля.');
             }
@@ -59,7 +59,7 @@ class UserController extends Controller
             ->count();
 
         return $this->render('profile', [
-            'model' => $model, // Передаем модель в вид
+            'model' => $model,
             'completedQuestCount' => $completedQuestCount,
             'createdQuestCount' => $createdQuestCount
         ]);
