@@ -5,10 +5,7 @@
 
 use app\assets\AppAsset;
 use app\widgets\Alert;
-use yii\bootstrap5\Breadcrumbs;
-use yii\bootstrap5\Html;
-use yii\bootstrap5\Nav;
-use yii\bootstrap5\NavBar;
+use yii\helpers\Html;
 
 AppAsset::register($this);
 
@@ -21,19 +18,17 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 ?>
 <?php $this->beginPage() ?>
     <!DOCTYPE html>
-    <html lang="<?= Yii::$app->language ?>" class="h-100">
+    <html lang="<?= Yii::$app->language ?>">
     <head>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body class="d-flex flex-column h-100">
+    <body>
+
     <?php include 'header.php'; ?>
 
     <?php $this->beginBody() ?>
 
-    <?php if (!empty($this->params['breadcrumbs'])): ?>
-        <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
-    <?php endif ?>
     <?= Alert::widget() ?>
     <?= $content ?>
 

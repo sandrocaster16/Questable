@@ -11,8 +11,6 @@ use yii\helpers\Html;
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Профиль - Questable</title>
-    <link rel="stylesheet" href="../../web/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -39,7 +37,7 @@ use yii\helpers\Html;
 
                 <div class="form-group">
                     <label>Ваш ID</label>
-                    <input type="text" value="#<?= Html::encode(Yii::$app->user->identity->id) ?>" class="input-field" disabled style="background: #f0f0f0;">
+                    <input type="text" value="#<?= Html::encode(Yii::$app->user->identity->id) ?>" class="input-field" disabled>
                 </div>
 
                 <button class="btn" type="button" onclick="alert('Сохранено (демо)!')">Сохранить изменения</button>

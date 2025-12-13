@@ -12,7 +12,7 @@ use yii\helpers\Url;
         <h2 class="sidebar-name">Questable</h2>
     </div>
     <ul class="nav-list">
-        <li><a href="<?= Url::to(['/site/index']) ?>"><i class="fas fa-home"></i> Главная</a></li>
+        <li><a href="<?= Url::to(['/']) ?>"><i class="fas fa-home"></i> Главная</a></li>
         <li><a href="<?= Url::to(['/user/profile']) ?>"><i class="fas fa-user-circle"></i> Профиль</a></li>
         <li><a href="<?= Url::to(['/quest/index']) ?>"><i class="fas fa-map"></i> Мои квесты</a></li>
         <li><a href="<?= Url::to(['/site/info']) ?>"><i class="fas fa-info"></i> Информация</a></li>
@@ -22,7 +22,7 @@ use yii\helpers\Url;
     <div class="sidebar-footer">
         <button id="themeToggle" class="theme-btn-sidebar">
             <i class="fas fa-moon"></i>
-            <span>Темная тема</span>
+            <span>Тёмная тема</span>
         </button>
     </div>
 </nav>
@@ -42,5 +42,3 @@ use yii\helpers\Url;
         </div>
     </div>
 </header>
-
-<script src="../../web/js/dark_mode.js"></script>

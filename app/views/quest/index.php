@@ -12,10 +12,10 @@ $this->title = 'Мои квесты';
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Мои квесты</h2>
-        <a href="<?= Url::to(['create']) ?>" class="btn btn-success">
-            <i class="fas fa-plus"></i> Создать новый
-        </a>
     </div>
+    <a href="<?= Url::to(['create']) ?>" class="btn btn-success">
+        <i class="fas fa-plus"></i> Создать новый
+    </a>
 
     <?php if (empty($quests)): ?>
         <div class="card text-center p-5 shadow-sm">
@@ -28,24 +28,19 @@ $this->title = 'Мои квесты';
     <?php else: ?>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <?php foreach ($quests as $quest): ?>
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <?php
-                        $img = $quest->cover_image_url ?? '/uploads/quest_previews/default.png';
-                        ?>
-                        <div style="height: 200px; overflow: hidden; background: #f8f9fa;">
-                            <img src="<?= $img ?>" class="card-img-top" alt="<?= Html::encode($quest->name) ?>" style="object-fit: cover; height: 100%; width: 100%;">
+                <div class="col" style="margin-top: 50px">
+                    <a class="quest-card" href="">
+                        <div class="card-img">
+                            <img src="<?= $quest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                         </div>
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title"><?= Html::encode($quest->name) ?></h5>
-                            <p class="card-text text-muted flex-grow-1">
-                                <?= Html::encode(StringHelper::truncateWords($quest->description, 10)) ?>
-                            </p>
-                            <a href="<?= Url::to(['update', 'id' => $quest->id]) ?>" class="btn btn-outline-primary mt-auto">
-                                <i class="fas fa-edit"></i> Редактировать
-                            </a>
+                        <div class="card-text">
+                            <h3> <?= $quest['name'] ?> </h3>
+                            <p> <?= $quest['description'] ?> </p>
+                            <div class="card-footer">
+                                <span class="rating"><i class="fas fa-star"></i><?php //= $quest['rating'] ?></span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 </div>
             <?php endforeach; ?>
         </div>

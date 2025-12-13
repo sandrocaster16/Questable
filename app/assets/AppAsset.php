@@ -26,6 +26,7 @@ class AppAsset extends AssetBundle
         'plugins/ckeditor/css/styles.css',
         'css/app.css',
         'css/style.css',
+        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
     ];
     public $js = [
         'plugins/jquery/jquery-3.7.1.min.js',
@@ -33,9 +34,10 @@ class AppAsset extends AssetBundle
         'plugins/ckeditor/js/ckeditor-translate-ru.js',
 //        'metronic/js/plugins.bundle.js',
 //        'metronic/js/scripts.bundle.js',
-        'js/main.js',
-        'js/dark-mode.js',
-        'js/script.js',
+        'js/theme.js',
+        'js/slider.js',
+        'js/sidebar.js',
+        'js/settings-modal.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

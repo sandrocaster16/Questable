@@ -16,8 +16,6 @@ $this->title = 'Questable';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Главная - Questable</title>
-    <link rel="stylesheet" href="../app/web/css/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
@@ -30,18 +28,20 @@ $this->title = 'Questable';
             <div class="cards-track" id="promo-track">
                 <!-- квестики -->
                 <?php foreach ($popular_quests as $quest): ?>
-                    <div class="quest-card">
+                    <!-- TODO: href на квест -->
+                    <!-- TODO: rating -->
+                    <a class="quest-card" href="https://google.com">
                         <div class="card-img">
-                            <img src="<?= $quest['cover_image_url'] ?>" alt="">
+                            <img src="<?= $quest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                         </div>
                         <div class="card-text">
                             <h3> <?= $quest['name'] ?> </h3>
                             <p> <?= $quest['description'] ?> </p>
-<!--                            <div class="card-footer">-->
-<!--                                <span class="rating"><i class="fas fa-star"></i> --><?php //= $quest['rating'] ?><!--</span>-->
-<!--                            </div>-->
+                            <div class="card-footer">
+                               <span class="rating"><i class="fas fa-star"></i><?php //= $quest['rating'] ?></span>
+                            </div>
                         </div>
-                    </div>
+                    </a>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -65,18 +65,20 @@ $this->title = 'Questable';
         <!-- если есть, то обрезка до 6 -->
         <div class="grid-container">
             <?php foreach(array_slice($user_history, 0, 6) as $user_historyquest): ?>
-                <div class="quest-card">
+                <!-- TODO: href на квест -->
+                <!-- TODO: rating -->
+                <a class="quest-card" href="">
                     <div class="card-img">
-                        <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="">
+                        <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                     </div>
                     <div class="card-text">
                         <h3> <?= $user_historyquest['name'] ?> </h3>
                         <p> <?= $user_historyquest['description'] ?> </p>
-<!--                        <div class="card-footer">-->
-<!--                            <span class="rating"><i class="fas fa-star"></i> --><?php //= $user_historyquest['rating'] ?><!--</span>-->
-<!--                        </div>-->
+                        <div class="card-footer">
+                            <span class="rating"><i class="fas fa-star"></i><?php //= $quest['rating'] ?></span>
+                        </div>
                     </div>
-                </div>
+                </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
