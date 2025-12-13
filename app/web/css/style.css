@@ -69,17 +69,6 @@ h1, h2, h3, h4 {
   overflow: hidden;
 }
 
-/* Декор для хедера, чтобы не был пустым */
-/*.header-wrapper::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 100%;
-  background: var(--accent);
-}*/
-
 .user-section {
   display: flex;
   align-items: center;
@@ -189,9 +178,7 @@ h1, h2, h3, h4 {
 }
 
 /* quests */
-a .quest-card,
->>>>>>> base-project
-.quest-card {
+.quest-card{
   flex: 0 0 var(--card-width);
   width: var(--card-width);
   height: var(--card-height);
@@ -206,17 +193,10 @@ a .quest-card,
   cursor: pointer;
 }
 
-a .quest-card:hover,
 .quest-card:hover {
   box-shadow: var(--shadow-hover);
   border-color: var(--accent);
   transform: translateY(-4px);
-}
-
-a .quest-card {
-    text-decoration: none;
-    color: inherit;
-    display: block;
 }
 
 .card-img {
@@ -654,3 +634,47 @@ body.dark-theme {
   border-color: var(--accent);
   transform: scale(1.05);
 }
+
+
+
+
+
+
+
+
+/* хз */
+.btn-nice {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 24px; border-radius: 12px; font-weight: 700; font-size: 14px;
+    border: 2px solid transparent; transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    cursor: pointer; text-decoration: none !important; width: auto !important; margin-top: 0 !important; line-height: 1.2;
+}
+.btn-nice:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.btn-nice:active { transform: translateY(-1px); }
+
+.btn-nice-primary { background: #212529; color: #fff; }
+.btn-nice-primary:hover { opacity: 0.9; color: #fff; }
+
+.btn-nice-secondary { background: #fff; color: #212529; border: 2px solid #dee2e6; }
+.btn-nice-secondary:hover { border-color: #212529; background: #fff; color: #212529; }
+
+.btn-nice-info { background: #e7f1ff; color: #0d6efd; border: 2px solid #cff4fc; }
+.btn-nice-info:hover { background: #0d6efd; color: #fff; border-color: #0d6efd; }
+
+.btn-nice-danger { background: #fff; color: #dc2626; border: 2px solid #fee2e2; }
+.btn-nice-danger:hover { border-color: #dc2626; background: #fef2f2; color: #dc2626; }
+
+.btn-nice-add { background: #fff; color: #212529; border: 2px dashed #212529; }
+.btn-nice-add:hover { background: #212529; color: #fff; border-style: solid; }
+
+.btn-icon-action {
+    width: 36px; height: 36px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid #dee2e6; background: #fff; color: #6c757d; transition: 0.2s;
+    cursor: pointer;
+}
+.btn-icon-action:hover { border-color: #212529; color: #212529; transform: scale(1.1); }
+.btn-icon-action.delete:hover { border-color: #dc2626; color: #dc2626; }
+.btn-icon-action.qr:hover { border-color: #0d6efd; color: #0d6efd; }
+
+.header-actions { display: flex; gap: 12px; flex-wrap: wrap; }

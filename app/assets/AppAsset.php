@@ -38,6 +38,8 @@ class AppAsset extends AssetBundle
         'js/slider.js',
         'js/sidebar.js',
         'js/settings-modal.js',
+        'js/stations.js',
+        'js/qrcodes.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

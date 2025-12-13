@@ -29,7 +29,7 @@ $this->title = 'Мои квесты';
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             <?php foreach ($quests as $quest): ?>
                 <div class="col" style="margin-top: 50px">
-                    <a class="quest-card" href="">
+                    <a class="quest-card" href="<?= Url::to(['update', 'id' => $quest->id]) ?>">
                         <div class="card-img">
                             <img src="<?= $quest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                         </div>
