@@ -105,4 +105,68 @@ class Quests extends \yii\db\ActiveRecord
         return $this->hasMany(QuestTeams::class, ['quest_id' => 'id']);
     }
 
+    /**
+     * Получить статистику квеста
+     * @return array
+     */
+    public function getStatistics()
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getQuestStatistics($this);
+    }
+
+    /**
+     * Получить топ участников
+     * @param int $limit
+     * @return array
+     */
+    public function getTopParticipants($limit = 10)
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getTopParticipants($this, $limit);
+    }
+
+    /**
+     * Получить топ команд
+     * @param int $limit
+     * @return array
+     */
+    public function getTopTeams($limit = 10)
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getTopTeams($this, $limit);
+    }
+
+    /**
+     * Получить количество активных участников (игроков)
+     * @return int
+     */
+    public function getParticipantsCount()
+    {
+        return QuestParticipants::find()
+            ->where(['quest_id' => $this->id])
+            ->andWhere(['role' => QuestParticipants::ROLE_PLAYER])
+            ->count();
+    }
+
+    /**
+     * Получить количество станций
+     * @return int
+     */
+    public function getStationsCount()
+    {
+        return QuestStations::find()
+            ->where(['quest_id' => $this->id])
+            ->andWhere(['deleted_at' => null])
+            ->count();
+    }
 }

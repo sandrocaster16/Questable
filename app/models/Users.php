@@ -30,6 +30,7 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
     const ROLE_ROOT = 'root';
     const ROLE_ADMIN = 'admin';
     const ROLE_USER = 'user';
+    const ROLE_VOLUNTEER = 'volunteer';
 
     /**
      * {@inheritdoc}
@@ -53,7 +54,34 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
             [['username'], 'string', 'max' => 255],
             [['avatar_url'], 'string', 'max' => 2048],
             ['role', 'in', 'range' => array_keys(self::optsRole())],
+            ['role', 'validateRoleChange'],
         ];
+    }
+
+    /**
+     * Валидация изменения роли
+     * Пользователь с id=1 всегда должен быть админом
+     */
+    public function validateRoleChange($attribute, $params)
+    {
+        if ($this->id === 1 && $this->role !== self::ROLE_ADMIN && $this->role !== self::ROLE_ROOT) {
+            $this->addError($attribute, 'Пользователь с ID=1 всегда должен быть администратором.');
+        }
+    }
+
+    /**
+     * Перед сохранением гарантируем, что пользователь с id=1 - админ
+     */
+    public function beforeSave($insert)
+    {
+        if (parent::beforeSave($insert)) {
+            // Пользователь с id=1 всегда админ
+            if ($this->id === 1 && $this->role !== self::ROLE_ADMIN && $this->role !== self::ROLE_ROOT) {
+                $this->role = self::ROLE_ADMIN;
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -122,7 +150,22 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
         return [
             self::ROLE_ROOT => 'root',
             self::ROLE_ADMIN => 'admin',
+            self::ROLE_VOLUNTEER => 'volunteer',
             self::ROLE_USER => 'user',
+        ];
+    }
+
+    /**
+     * Получить человекочитаемые названия ролей
+     * @return array
+     */
+    public static function getRoleLabels()
+    {
+        return [
+            self::ROLE_ROOT => 'Root (Супер-администратор)',
+            self::ROLE_ADMIN => 'Администратор',
+            self::ROLE_VOLUNTEER => 'Волонтер',
+            self::ROLE_USER => 'Обычный пользователь',
         ];
     }
 
@@ -171,6 +214,38 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
     public function setRoleToUser()
     {
         $this->role = self::ROLE_USER;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRoleVolunteer()
+    {
+        return $this->role === self::ROLE_VOLUNTEER;
+    }
+
+    public function setRoleToVolunteer()
+    {
+        $this->role = self::ROLE_VOLUNTEER;
+    }
+
+    /**
+     * Проверка, является ли пользователь администратором (root или admin)
+     * Пользователь с id=1 всегда считается админом
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->id === 1 || $this->isRoleAdmin() || $this->isRoleRoot();
+    }
+
+    /**
+     * Проверка, является ли пользователь волонтером или выше
+     * @return bool
+     */
+    public function isVolunteerOrAbove()
+    {
+        return $this->isAdmin() || $this->isRoleVolunteer();
     }
 
     /**

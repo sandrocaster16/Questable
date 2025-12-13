@@ -88,4 +88,39 @@ class QuestTeams extends \yii\db\ActiveRecord
         return $this->hasMany(QuestParticipants::class, ['team_id' => 'id']);
     }
 
+    /**
+     * Получить прогресс команды
+     * @return array
+     */
+    public function getProgress()
+    {
+        $service = \Yii::$app->get('questProgressService', false);
+        if (!$service) {
+            $service = new \app\core\services\QuestProgressService();
+        }
+        return $service->getTeamProgress($this);
+    }
+
+    /**
+     * Получить общее количество очков команды
+     * @return int
+     */
+    public function getTotalPoints()
+    {
+        $participants = $this->questParticipants;
+        $totalPoints = 0;
+        foreach ($participants as $participant) {
+            $totalPoints += $participant->points;
+        }
+        return $totalPoints;
+    }
+
+    /**
+     * Получить количество участников команды
+     * @return int
+     */
+    public function getMembersCount()
+    {
+        return count($this->questParticipants);
+    }
 }

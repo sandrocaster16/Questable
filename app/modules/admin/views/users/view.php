@@ -31,11 +31,44 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'username',
-            'tg_id',
-            'role',
-            'created_at',
-            'deleted_at',
-            'banned_at',
+            [
+                'attribute' => 'role',
+                'format' => 'raw',
+                'value' => function($model) {
+                    $labels = \app\models\Users::getRoleLabels();
+                    $roleLabel = $labels[$model->role] ?? $model->role;
+                    $badgeClass = match($model->role) {
+                        'root' => 'badge bg-danger',
+                        'admin' => 'badge bg-warning text-dark',
+                        'volunteer' => 'badge bg-info',
+                        'user' => 'badge bg-secondary',
+                        default => 'badge bg-secondary'
+                    };
+                    return '<span class="' . $badgeClass . '">' . Html::encode($roleLabel) . '</span>' . 
+                           ($model->id === 1 ? ' <span class="badge bg-danger">Защищен</span>' : '');
+                },
+            ],
+            [
+                'attribute' => 'created_at',
+                'value' => function($model) {
+                    return $model->created_at ? date('d.m.Y H:i:s', strtotime($model->created_at)) : '-';
+                },
+            ],
+            [
+                'attribute' => 'deleted_at',
+                'value' => function($model) {
+                    return $model->deleted_at ? date('d.m.Y H:i:s', strtotime($model->deleted_at)) : '-';
+                },
+                'visible' => $model->deleted_at !== null,
+            ],
+            [
+                'attribute' => 'banned',
+                'label' => 'Banned',
+                'value' => function($model) {
+                    return $model->banned ? date('d.m.Y H:i:s', strtotime($model->banned)) : '-';
+                },
+                'visible' => $model->banned !== null,
+            ],
         ],
     ]) ?>
 

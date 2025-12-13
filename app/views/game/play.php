@@ -6,9 +6,10 @@ use yii\helpers\Markdown;
 /** @var $station app\models\QuestStations */
 /** @var $participant app\models\QuestParticipants */
 /** @var $progress app\models\StationProgress|null */
+/** @var $questProgress array */
 
 $this->title = $station->name;
-$isCompleted = $progress && $progress->status === 'completed';
+$isCompleted = $progress && $progress->isStatusCompleted();
 
 $quizData = [];
 $answersList = [];
@@ -30,6 +31,28 @@ if ($station->type === 'quiz' && !empty($station->options)) {
             <span class="badge bg-primary rounded-pill fs-6"><?= $participant->points ?? 0 ?></span>
         </div>
     </div>
+
+    <?php if (isset($questProgress)): ?>
+    <div class="card shadow-sm border-0 mb-4" style="border-radius: 12px;">
+        <div class="card-body p-3">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="text-muted small fw-bold">Прогресс квеста</span>
+                <span class="badge bg-success"><?= $questProgress['completed_stations'] ?>/<?= $questProgress['total_stations'] ?></span>
+            </div>
+            <div class="progress" style="height: 8px; border-radius: 10px;">
+                <div class="progress-bar bg-primary" role="progressbar" 
+                     style="width: <?= $questProgress['progress_percentage'] ?>%" 
+                     aria-valuenow="<?= $questProgress['progress_percentage'] ?>" 
+                     aria-valuemin="0" 
+                     aria-valuemax="100">
+                </div>
+            </div>
+            <div class="text-center mt-2">
+                <small class="text-muted"><?= $questProgress['progress_percentage'] ?>% завершено</small>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <?php if (Yii::$app->session->hasFlash('success')): ?>
         <div class="alert alert-success d-flex align-items-center shadow-sm border-0 mb-4" role="alert">
@@ -80,8 +103,8 @@ if ($station->type === 'quiz' && !empty($station->options)) {
                         </div>
 
                         <div class="mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold" style="border-radius: 12px;">
-                                Ответить
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold mx-auto d-block" style="border-radius: 12px; min-width: 200px; padding: 12px 30px;">
+                                <i class="fas fa-paper-plane me-2"></i> Ответить
                             </button>
                         </div>
                     </form>
@@ -93,8 +116,8 @@ if ($station->type === 'quiz' && !empty($station->options)) {
                         <p class="mb-3 text-muted small">
                             Покажите этот экран волонтеру. Он подтвердит выполнение задания.
                         </p>
-                        <button onclick="location.reload()" class="btn btn-warning w-100 fw-bold">
-                            <i class="fas fa-sync-alt me-1"></i> Проверить статус
+                        <button onclick="location.reload()" class="btn btn-warning fw-bold mx-auto d-block" style="min-width: 200px; padding: 12px 30px; border-radius: 12px;">
+                            <i class="fas fa-sync-alt me-2"></i> Проверить статус
                         </button>
                     </div>
 

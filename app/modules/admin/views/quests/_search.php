@@ -13,31 +13,37 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin([
             'action' => ['index'],
             'method' => 'get',
-            'options' => ['data-pjax' => 1],
+            'options' => [
+                    'data-pjax' => 1 // Если используете Pjax
+            ],
     ]); ?>
 
     <div class="row">
         <div class="col-md-2">
-            <?= $form->field($model, 'id')->label('ID') ?>
+            <?= $form->field($model, 'id') ?>
         </div>
+
         <div class="col-md-4">
-            <?= $form->field($model, 'name')->label('Название') ?>
+            <?= $form->field($model, 'name') ?>
         </div>
-        <div class="col-md-4">
-            <?= $form->field($model, 'tags')->label('Тэги') ?>
-        </div>
+
         <div class="col-md-3">
-            <?= $form->field($model, 'created_at')->label('Создан') ?>
+            <!-- Исправлено с deleted_at на delete_at, как в модели -->
+            <?= $form->field($model, 'delete_at')->textInput(['placeholder' => 'ГГГГ-ММ-ДД']) ?>
         </div>
+
         <div class="col-md-3">
-            <?= $form->field($model, 'deleted_at')->label('Удален') ?>
+            <?= $form->field($model, 'created_at')->textInput(['placeholder' => 'ГГГГ-ММ-ДД']) ?>
         </div>
     </div>
 
-    <div class="form-group mt-3">
-        <?= Html::submitButton('Найти', ['class' => 'btn btn-primary me-2']) ?>
-        <?= Html::resetButton('Сбросить', ['class' => 'btn btn-outline-secondary']) ?>
+    <!-- Поле tags удалено, так как его нет в базе данных и модели -->
+
+    <div class="form-group mt-2">
+        <?= Html::submitButton('Искать', ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Сбросить', ['index'], ['class' => 'btn btn-outline-secondary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
+
 </div>

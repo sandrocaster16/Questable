@@ -188,7 +188,9 @@ h1, h2, h3, h4 {
   margin-left: 15px;
 }
 
-/* Quests */
+/* quests */
+a .quest-card,
+>>>>>>> base-project
 .quest-card {
   flex: 0 0 var(--card-width);
   width: var(--card-width);
@@ -204,10 +206,17 @@ h1, h2, h3, h4 {
   cursor: pointer;
 }
 
+a .quest-card:hover,
 .quest-card:hover {
   box-shadow: var(--shadow-hover);
   border-color: var(--accent);
-  transform: translateY(-4px); /* Лёгкий lift для динамики */
+  transform: translateY(-4px);
+}
+
+a .quest-card {
+    text-decoration: none;
+    color: inherit;
+    display: block;
 }
 
 .card-img {

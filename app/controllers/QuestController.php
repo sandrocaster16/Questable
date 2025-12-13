@@ -136,6 +136,22 @@ class QuestController extends Controller
         return $this->redirect(Yii::$app->request->referrer);
     }
 
+    public function actionStatistics($id)
+    {
+        $quest = $this->findModel($id);
+
+        if ($quest->creator_id !== Yii::$app->user->id) {
+            throw new ForbiddenHttpException('Доступ запрещен.');
+        }
+
+        $statistics = $quest->getStatistics();
+
+        return $this->render('statistics', [
+            'quest' => $quest,
+            'statistics' => $statistics,
+        ]);
+    }
+
     protected function findModel($id)
     {
         if (($model = Quests::findOne($id)) !== null && $model->delete_at === null) {

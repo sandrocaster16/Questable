@@ -51,8 +51,11 @@ use yii\widgets\ActiveForm;
         </div>
     </div>
 
-    <div class="d-grid gap-2 mt-3">
-        <?= Html::submitButton('Сохранить станцию', ['class' => 'btn btn-primary btn-lg']) ?>
+    <div class="d-flex gap-2 mt-3 justify-content-end">
+        <?= Html::submitButton('<i class="fas fa-save me-2"></i> Сохранить станцию', [
+            'class' => 'btn btn-primary',
+            'style' => 'min-width: 180px; padding: 10px 20px;'
+        ]) ?>
     </div>
 
     <?php ActiveForm::end(); ?>
