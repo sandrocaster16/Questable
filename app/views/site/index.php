@@ -29,9 +29,8 @@ $this->title = 'Questable';
             <div class="cards-track" id="promo-track">
                 <!-- квестики -->
                 <?php foreach ($popular_quests as $quest): ?>
-                    <!-- TODO: href на квест -->
                     <!-- TODO: rating -->
-                    <a class="quest-card" href="https://google.com">
+                    <a class="quest-card" href="site/view?id=<?= $quest['id'] ?>" >
                         <div class="card-img">
                             <img src="<?= $quest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                         </div>
@@ -68,9 +67,9 @@ $this->title = 'Questable';
             <?php foreach(array_slice($user_history, 0, 6) as $user_historyquest): ?>
                 <!-- TODO: href на квест -->
                 <!-- TODO: rating -->
-                <a class="quest-card" href="">
+                <a class="quest-card"  href="quest/statistics?id=<?= $user_historyquest['id'] ?>" >
                     <div class="card-img">
-                        <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
+                        <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="<?= $user_historyquest['name'] ?>">
                     </div>
                     <div class="card-text">
                         <h3> <?= $user_historyquest['name'] ?> </h3>

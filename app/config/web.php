@@ -31,6 +31,12 @@ $config = [
             'identityClass' => 'app\models\User',
             'loginUrl' => ['auth/login'],
             'enableAutoLogin' => true,
+            'on beforeAction' => function ($event) {
+                if (Yii::$app->user->isGuest) {
+                    Yii::$app->controller->redirect(['auth/login']);
+                    $event->isValid = false;
+                }
+            },
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -57,7 +63,7 @@ $config = [
 //                ],
             ],
         ],
-        'authManager' => [ // <--- ДОБАВЬТЕ ЭТОТ БЛОК
+        'authManager' => [
             'class' => DbManager::class,
         ],
         'db' => $db,

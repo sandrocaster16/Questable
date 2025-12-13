@@ -137,8 +137,7 @@ class SiteController extends Controller
             ]);
 
             if ($currentParticipant) {
-                $progressService = new QuestProgressService();
-                $questProgress = $progressService->getParticipantProgress($currentParticipant);
+                $questProgress = (new QuestProgressService())->getParticipantProgress($currentParticipant);
             }
         }
 
