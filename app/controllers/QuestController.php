@@ -45,7 +45,6 @@ class QuestController extends Controller
             $quest = new Quests();
 
             if ($form->save($quest)) {
-                Yii::$app->session->setFlash('success', 'Квест создан! Теперь добавьте станции.');
                 return $this->redirect(['update', 'id' => $quest->id]);
             }
         }
@@ -68,7 +67,6 @@ class QuestController extends Controller
         if ($questForm->load(Yii::$app->request->post())) {
             $questForm->coverFile = UploadedFile::getInstance($questForm, 'coverFile');
             if ($questForm->save($quest)) {
-                Yii::$app->session->setFlash('success', 'Основные настройки сохранены');
                 return $this->refresh();
             }
         }

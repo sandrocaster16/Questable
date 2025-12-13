@@ -60,7 +60,7 @@ class SiteController extends Controller
         if (file_exists($uploadPath . $logoFilename)) {
             $logoUrl = $uploadUrlLogo . $logoFilename;
         } else {
-            $logoUrl = $uploadUrlLogo . 'default_logo.jpeg';
+            $logoUrl = $uploadUrlLogo . 'default_default_logo.png';
         }
 
         $historyQuery = QuestParticipants::find()
@@ -159,7 +159,6 @@ class SiteController extends Controller
     public function actionStart($id)
     {
         if (Yii::$app->user->isGuest) {
-            Yii::$app->session->setFlash('warning', 'Для начала квеста необходимо войти в систему.');
             Yii::$app->user->returnUrl = ['site/view', 'id' => $id];
             return $this->redirect(['auth/login']);
         }
@@ -175,7 +174,6 @@ class SiteController extends Controller
 
         $userId = Yii::$app->user->id;
 
-        // Проверяем, не участвует ли уже пользователь в квесте
         $participant = QuestParticipants::findOne([
             'user_id' => $userId,
             'quest_id' => $quest->id
@@ -183,23 +181,19 @@ class SiteController extends Controller
 
         if ($participant) {
             if ($participant->isBanned()) {
-                Yii::$app->session->setFlash('error', 'Вы дисквалифицированы из этого квеста.');
                 return $this->redirect(['site/view', 'id' => $id]);
             }
 
-            // Если уже участвует, перенаправляем на прогресс или первую станцию
             $progressService = new QuestProgressService();
             $nextStation = $progressService->getNextAvailableStation($participant);
 
             if ($nextStation) {
                 return $this->redirect(['game/visit', 'qr' => $nextStation->qr_identifier]);
             } else {
-                // Все станции пройдены, показываем прогресс
                 return $this->redirect(['game/progress', 'quest_id' => $quest->id]);
             }
         }
 
-        // Создаем нового участника
         $participant = new QuestParticipants();
         $participant->user_id = $userId;
         $participant->quest_id = $quest->id;
@@ -208,7 +202,6 @@ class SiteController extends Controller
         $participant->created_at = date('Y-m-d H:i:s');
 
         if ($participant->save()) {
-            // Инициализируем прогресс для нового участника
             $progressService = new QuestProgressService();
             $progressService->initializeProgress($participant);
 
@@ -220,14 +213,11 @@ class SiteController extends Controller
                 ->one();
 
             if ($firstStation) {
-                Yii::$app->session->setFlash('success', 'Квест начат! Удачи!');
                 return $this->redirect(['game/visit', 'qr' => $firstStation->qr_identifier]);
             } else {
-                Yii::$app->session->setFlash('warning', 'Квест начат, но в нем пока нет станций.');
                 return $this->redirect(['site/view', 'id' => $id]);
             }
         } else {
-            Yii::$app->session->setFlash('error', 'Ошибка при начале квеста.');
             return $this->redirect(['site/view', 'id' => $id]);
         }
     }

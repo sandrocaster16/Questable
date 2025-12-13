@@ -140,7 +140,7 @@ $this->title = 'Квест завершен: ' . Html::encode($quest->name);
         <div class="trophy-icon">
             <i class="fas fa-trophy"></i>
         </div>
-        
+
         <h1 class="completion-title">Поздравляем!</h1>
         <p class="completion-subtitle">Вы успешно завершили квест<br><strong><?= Html::encode($quest->name) ?></strong></p>
 
@@ -159,17 +159,17 @@ $this->title = 'Квест завершен: ' . Html::encode($quest->name);
             </div>
         </div>
 
-        <div class="alert alert-success" style="border-radius: 12px; margin-top: 30px;">
+        <div style="border-radius: 12px; margin-top: 30px;">
             <i class="fas fa-check-circle me-2"></i>
             <strong>Отличная работа!</strong> Вы прошли все станции квеста и набрали <?= $participant->points ?> очков.
         </div>
 
         <div class="action-buttons">
-            <a href="<?= Url::to(['game/progress', 'quest_id' => $quest->id]) ?>" 
+            <a href="<?= Url::to(['game/progress', 'quest_id' => $quest->id]) ?>"
                class="btn btn-primary btn-completion">
                 <i class="fas fa-chart-line me-2"></i> Подробная статистика
             </a>
-            <a href="<?= Url::to(['site/index']) ?>" 
+            <a href="<?= Url::to(['site/index']) ?>"
                class="btn btn-outline-primary btn-completion">
                 <i class="fas fa-home me-2"></i> На главную
             </a>
