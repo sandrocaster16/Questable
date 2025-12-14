@@ -100,57 +100,6 @@ class SiteController extends Controller
     }
 
     /**
-     * Просмотр квеста
-     * @param int $id
-     * @return string
-     * @throws NotFoundHttpException
-     */
-    public function actionView($id)
-    {
-        $quest = Quests::find()
-            ->where(['id' => $id])
-            ->andWhere(['delete_at' => null])
-            ->one();
-
-        if (!$quest) {
-            throw new NotFoundHttpException('Квест не найден.');
-        }
-
-        // Получаем статистику квеста
-        $stationsCount = QuestStations::find()
-            ->where(['quest_id' => $quest->id])
-            ->andWhere(['deleted_at' => null])
-            ->count();
-
-        $participantsCount = QuestParticipants::find()
-            ->where(['quest_id' => $quest->id])
-            ->andWhere(['role' => QuestParticipants::ROLE_PLAYER])
-            ->count();
-
-        // Проверяем, участвует ли текущий пользователь в квесте
-        $currentParticipant = null;
-        $questProgress = null;
-        if (!Yii::$app->user->isGuest) {
-            $currentParticipant = QuestParticipants::findOne([
-                'user_id' => Yii::$app->user->id,
-                'quest_id' => $quest->id
-            ]);
-
-            if ($currentParticipant) {
-                $questProgress = (new QuestProgressService())->getParticipantProgress($currentParticipant);
-            }
-        }
-
-        return $this->render('quest-view', [
-            'quest' => $quest,
-            'stationsCount' => $stationsCount,
-            'participantsCount' => $participantsCount,
-            'currentParticipant' => $currentParticipant,
-            'questProgress' => $questProgress,
-        ]);
-    }
-
-    /**
      * Начать квест
      * @param int $id
      * @return \yii\web\Response

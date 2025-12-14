@@ -10,7 +10,7 @@ use yii\helpers\Url;
 $this->title = 'Редактирование: ' . $quest->name;
 
 // URL для самого квеста
-$questUrl = Url::to(['quest/view', 'id' => $quest->id], true);
+$questUrl = Url::to(['view', 'id' => $quest->id], true);
 
 // Подключаем ресурсы
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');

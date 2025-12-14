@@ -30,7 +30,7 @@ $this->title = 'Questable';
                 <!-- квестики -->
                 <?php foreach ($popular_quests as $quest): ?>
                     <!-- TODO: rating -->
-                    <a class="quest-card" href="site/view?id=<?= $quest['id'] ?>" >
+                    <a class="quest-card" href="/quest/view?id=<?= $quest['id'] ?>" >
                         <div class="card-img">
                             <img src="<?= $quest['cover_image_url'] ?>" alt="<?= $quest['name'] ?>">
                         </div>
@@ -67,7 +67,7 @@ $this->title = 'Questable';
             <?php foreach(array_slice($user_history, 0, 6) as $user_historyquest): ?>
                 <!-- TODO: href на квест -->
                 <!-- TODO: rating -->
-                <a class="quest-card"  href="quest/statistics?id=<?= $user_historyquest['id'] ?>" >
+                <a class="quest-card"  href="/game/progress?quest_id=<?= $user_historyquest['id'] ?>" >
                     <div class="card-img">
                         <img src="<?= $user_historyquest['cover_image_url'] ?>" alt="<?= $user_historyquest['name'] ?>">
                     </div>
