@@ -138,11 +138,6 @@ $this->title = 'Questable - ' . Html::encode($quest->name);
                     <i class="fas fa-chart-line"></i> Мой прогресс
                 </a>
             <?php endif; ?>
-        <?php else: ?>
-            <a href="<?= Url::to(['site/start', 'id' => $quest->id]) ?>"
-               class="btn btn-primary btn-large">
-                <i class="fas fa-play"></i> Начать квест
-            </a>
         <?php endif; ?>
     </div>
 </div>

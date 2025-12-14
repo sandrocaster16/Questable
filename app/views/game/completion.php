@@ -41,17 +41,6 @@ $this->title = 'Questable - Квест завершен: ' . Html::encode($quest
             <i class="fas fa-check-circle me-2"></i>
             <strong>Отличная работа!</strong> Вы прошли все станции квеста и набрали <?= $participant->points ?> очков.
         </div>
-
-        <div class="action-buttons">
-            <a href="<?= Url::to(['game/progress', 'quest_id' => $quest->id]) ?>"
-               class="btn btn-primary btn-completion">
-                <i class="fas fa-chart-line me-2"></i> Подробная статистика
-            </a>
-            <a href="<?= Url::to(['site/index']) ?>"
-               class="btn btn-outline-primary btn-completion">
-                <i class="fas fa-home me-2"></i> На главную
-            </a>
-        </div>
     </div>
     <div class="alert alert-success">
         <i class="fas fa-check-circle me-2"></i>

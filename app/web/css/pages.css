@@ -139,8 +139,7 @@
 
 .game-completion {
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  display: flex;
+  /*background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);*/
   min-height: 100vh;
   padding: 20px;
 }
@@ -154,6 +153,7 @@
   padding: 50px 40px;
   text-align: center;
   width: 100%;
+  margin: auto;
 }
 
 .game-play .border {
