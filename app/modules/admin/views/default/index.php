@@ -1,8 +1,6 @@
 <?php
-
 use yii\helpers\Html;
 use yii\helpers\Url;
-
 /** @var yii\web\View $this */
 /** @var int $totalUsers */
 /** @var int $activeUsers */
@@ -20,12 +18,10 @@ use yii\helpers\Url;
 /** @var array $recentUsers */
 /** @var array $recentQuests */
 /** @var array $topQuestsByParticipants */
-
-$this->title = 'Административная панель';
+$this->title = 'Questable - Административная панель';
 $this->params['breadcrumbs'][] = $this->title;
 $this->registerCssFile('@web/css/admin-enhancements.css');
 ?>
-
 <div class="admin-default-index">
     <div class="container-fluid">
         <div class="row mb-4">
@@ -45,13 +41,12 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                 </div>
             </div>
         </div>
-
         <!-- Статистика пользователей -->
         <div class="row mb-4">
             <div class="col-12">
                 <h3 class="mb-3">
                     <i class="fas fa-users"></i> Пользователи
-                    <a href="<?= Url::to(['users/index']) ?>" class="btn btn-sm btn-outline-primary float-end">
+                    <a href="<?= Url::to(['users/index']) ?>" class="btn btn-outline-primary float-end">
                         Управление <i class="fas fa-arrow-right"></i>
                     </a>
                 </h3>
@@ -134,13 +129,12 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
             </div>
             <?php endif; ?>
         </div>
-
         <!-- Статистика квестов -->
         <div class="row mb-4">
             <div class="col-12">
                 <h3 class="mb-3">
                     <i class="fas fa-map-marked-alt"></i> Квесты
-                    <a href="<?= Url::to(['quests/index']) ?>" class="btn btn-sm btn-outline-primary float-end">
+                    <a href="<?= Url::to(['quests/index']) ?>" class="btn btn-outline-primary float-end">
                         Управление <i class="fas fa-arrow-right"></i>
                     </a>
                 </h3>
@@ -191,7 +185,6 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                 </div>
             </div>
         </div>
-
         <!-- Статистика участников -->
         <div class="row mb-4">
             <div class="col-12">
@@ -260,7 +253,6 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                 </div>
             </div>
         </div>
-
         <!-- Быстрые ссылки -->
         <div class="row mb-4">
             <div class="col-12">
@@ -303,7 +295,6 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                 </a>
             </div>
         </div>
-
         <!-- Последние пользователи -->
         <?php if (!empty($recentUsers)): ?>
         <div class="row mb-4">
@@ -329,7 +320,7 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                                         </small>
                                     </div>
                                     <div>
-                                        <span class="badge bg-<?= $user->role === 'admin' || $user->role === 'root' ? 'warning' : ($user->role === 'volunteer' ? 'info' : 'secondary') ?>">
+                                        <span class="badge role-badge">
                                             <?= Html::encode($user->displayRole()) ?>
                                         </span>
                                         <a href="<?= Url::to(['users/view', 'id' => $user->id]) ?>" class="btn btn-sm btn-outline-primary ms-2">
@@ -342,7 +333,6 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
                     </div>
                 </div>
             </div>
-
             <!-- Последние квесты -->
             <div class="col-md-6">
                 <div class="card">
@@ -378,7 +368,6 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
             </div>
         </div>
         <?php endif; ?>
-
         <!-- Топ квесты по участникам -->
         <?php if (!empty($topQuestsByParticipants)): ?>
         <div class="row">
@@ -441,17 +430,3 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
         <?php endif; ?>
     </div>
 </div>
-
-<style>
-    .admin-default-index .card {
-        transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .admin-default-index .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .admin-default-index .card-body h2 {
-        font-weight: bold;
-    }
-</style>
-

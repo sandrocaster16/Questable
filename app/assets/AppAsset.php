@@ -21,12 +21,16 @@ class AppAsset extends AssetBundle
     public $basePath = '@webroot';
     public $baseUrl = '@web';
     public $css = [
-        'metronic/css/plugins.bundle.css',
-        'metronic/css/style.bundle.css',
-        'plugins/ckeditor/css/styles.css',
         'css/app.css',
-        'css/style.css',
         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css',
+        'css/components.css',
+        'css/custom.css',
+        'css/layout.css',
+        'css/pages.css',
+        'css/reset.css',
+        'css/variables.css',
+        'css/dark-theme.css',
+        'css/mobile.css',
     ];
     public $js = [
         'plugins/jquery/jquery-3.7.1.min.js',

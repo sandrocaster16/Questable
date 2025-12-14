@@ -4,7 +4,7 @@ use yii\helpers\Url;
 
 /** @var $progress array */
 
-$this->title = 'Прогресс по квесту: ' . Html::encode($progress['quest']->name);
+$this->title = 'Questable - Прогресс по квесту: ' . Html::encode($progress['quest']->name);
 ?>
 
 <div class="container py-4" style="max-width: 800px;">

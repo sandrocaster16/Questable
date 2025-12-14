@@ -1,11 +1,8 @@
 <?php
-
 use yii\helpers\Html;
 use yii\helpers\Url;
-
 ?>
 <div class="overlay" id="overlay"></div>
-
 <nav class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <span class="close-btn" id="sidebarClose">&times;</span>
@@ -18,7 +15,6 @@ use yii\helpers\Url;
         <li><a href="<?= Url::to(['/site/info']) ?>"><i class="fas fa-info"></i> Информация</a></li>
         <li><a href="<?= Url::to(['/admin/default/index']) ?>"><i class="fas fa-admin"></i> Админ панель</a></li>
     </ul>
-
     <div class="sidebar-footer">
         <button id="themeToggle" class="theme-btn-sidebar">
             <i class="fas fa-moon"></i>
@@ -26,7 +22,6 @@ use yii\helpers\Url;
         </button>
     </div>
 </nav>
-
 <header class="container">
     <div class="header-wrapper">
         <div class="user-section">
@@ -36,7 +31,6 @@ use yii\helpers\Url;
                 <span>ID: <?= Html::encode(Yii::$app->user->identity->id ?? '') ?></span>
             </div>
         </div>
-
         <div class="logo-btn" id="sidebarToggle" title="Открыть меню">
             <img src="<?= Yii::getAlias(Yii::$app->params['logoPath']) ?>" class="header-img" alt="logo">
         </div>

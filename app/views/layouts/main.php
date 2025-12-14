@@ -1,14 +1,10 @@
 <?php
-
 /** @var yii\web\View $this */
 /** @var string $content */
-
 use app\assets\AppAsset;
 use app\widgets\Alert;
 use yii\helpers\Html;
-
 AppAsset::register($this);
-
 $this->registerCsrfMetaTags();
 $this->registerMetaTag(['charset' => Yii::$app->charset], 'charset');
 $this->registerMetaTag(['name' => 'viewport', 'content' => 'width=device-width, initial-scale=1, shrink-to-fit=no']);
@@ -23,15 +19,15 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body>
-
+    <body class="<?= Yii::$app->controller->id . '-' . Yii::$app->controller->action->id ?>">
+    
     <?php include 'header.php'; ?>
-
+    
     <?php $this->beginBody() ?>
-
+    
     <?= Alert::widget() ?>
     <?= $content ?>
-
+    
     <?php $this->endBody() ?>
     </body>
     </html>

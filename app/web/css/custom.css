@@ -1,0 +1,133 @@
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes confetti-fall {
+  to {
+    opacity: 0;
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+.completion-subtitle {
+  color: var(--text-secondary);
+  font-size: 20px;
+  margin-bottom: 40px;
+}
+
+.completion-title {
+  color: var(--text-main);
+  font-size: 42px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.confetti {
+  animation: confetti-fall 3s linear infinite;
+  background: var(--rating-star);
+  height: 10px;
+  position: absolute;
+  position: fixed;
+  width: 10px;
+}
+
+.drop-shadow {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.prose img {
+  border-radius: var(--border-radius);
+  height: auto;
+  margin: 10px 0;
+  max-width: 100%;
+}
+
+.prose p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.quest-hero {
+  border-radius: var(--border-radius);
+  height: 400px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  position: relative;
+}
+
+.quest-hero img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.quest-hero-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  bottom: 0;
+  color: var(--primary-inv);
+  left: 0;
+  padding: 30px;
+  position: absolute;
+  right: 0;
+}
+
+.quest-stats {
+  display: flex;
+  gap: 30px;
+  margin: 20px 0;
+}
+
+.stat-item {
+  align-items: center;
+  background: var(--bg-element);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  transition: all 0.3s;
+}
+
+.stat-item:hover {
+  border-color: var(--accent);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-3px);
+}
+
+.stat-icon {
+  box-shadow: var(--shadow-base);
+  flex-shrink: 0;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  color: var(--accent);
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.trophy-icon {
+  animation: bounce 1s ease-in-out infinite;
+  color: var(--rating-star);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+  font-size: 120px;
+  margin-bottom: 30px;
+}

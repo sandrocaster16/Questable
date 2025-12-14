@@ -5,24 +5,12 @@
 /** @var string $username */
 /** @var array $popular_quests */
 /** @var array $user_history */
-
 use yii\helpers\Html;
 use yii\helpers\Url;
-
-$this->title = 'Questable';
 ?>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Главная - Questable</title>
-</head>
-<body>
-
 <div class="container">
     <!-- актуалочка -->
-    <h2 style="margin-bottom: 20px;">Популярные квесты</h2>
+    <h2>Популярные квесты</h2>
     <div class="slider">
         <button class="slider-btn prev-btn" id="promo-prev-btn">&lt;</button>
         <div class="slider-wrapper">
@@ -39,7 +27,7 @@ $this->title = 'Questable';
                             <h3> <?= $quest['name'] ?> </h3>
                             <p> <?= $quest['description'] ?> </p>
                             <div class="card-footer">
-                               <span class="rating"><i class="fas fa-star"></i><?php //= $quest['rating'] ?></span>
+                               <span class="rating"><i class="fas fa-star"></i></span>
                             </div>
                         </div>
                     </a>
@@ -48,12 +36,9 @@ $this->title = 'Questable';
         </div>
         <button class="slider-btn next-btn" id="promo-next-btn">&gt;</button>
     </div>
-
-    <hr style="border:0; border-top:1px solid #ddd; margin: 40px 0;">
-
+    <hr>
     <!-- история посещений -->
-    <h2 style="margin-bottom: 20px;">История посещений</h2>
-
+    <h2>История посещений</h2>
     <?php if (empty($user_history)): ?>
         <!-- если пусто -->
         <div class="empty-block">
@@ -61,7 +46,6 @@ $this->title = 'Questable';
             <h3>Пусто</h3>
             <p>Вы ещё не посетили ни один квест.</p>
         </div>
-
     <?php else: ?>
         <!-- если есть, то обрезка до 6 -->
         <div class="grid-container">
@@ -76,14 +60,11 @@ $this->title = 'Questable';
                         <h3> <?= $user_historyquest['name'] ?> </h3>
                         <p> <?= $user_historyquest['description'] ?> </p>
                         <div class="card-footer">
-                            <span class="rating"><i class="fas fa-star"></i><?php //= $quest['rating'] ?></span>
+                            <span class="rating"><i class="fas fa-star"></i></span>
                         </div>
                     </div>
                 </a>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
-
 </div>
-</body>
-</html>

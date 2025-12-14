@@ -1,0 +1,102 @@
+body.dark-theme {
+  --accent: #818CF8;
+  --bg-body: #0F172A;
+  --bg-element: #334155;
+  --bg-surface: #1E293B;
+  --border: #475569;
+  --border-hover: #818CF8;
+  --border-radius: 14px;
+  --primary: #F1F5F9;
+  --primary-inv: #0F172A;
+  --rating-star: #FCD34D;
+  --shadow-base: 0 4px 20px rgba(0, 0, 0, 0.6);
+  --shadow-hover: 0 12px 40px rgba(129, 140, 248, 0.4);
+  --text-main: #F1F5F9;
+  --text-secondary: #94A3B8;
+}
+
+body.dark-theme,
+body.dark-theme p,
+body.dark-theme span,
+body.dark-theme small,
+body.dark-theme label,
+body.dark-theme div {
+  color: var(--text-main);
+}
+
+body.dark-theme .text-muted,
+body.dark-theme .text-secondary,
+body.dark-theme .hint-block,
+body.dark-theme .help-block,
+body.dark-theme .form-text {
+  color: var(--text-secondary) !important;
+}
+
+body.dark-theme h1,
+body.dark-theme h2,
+body.dark-theme h3,
+body.dark-theme h4,
+body.dark-theme h5,
+body.dark-theme h6 {
+  color: var(--text-main);
+}
+
+body.dark-theme .form-group label,
+body.dark-theme .control-label,
+body.dark-theme .form-label {
+  color: var(--text-main);
+}
+
+body.dark-theme .card,
+body.dark-theme .card-header,
+body.dark-theme .card-body,
+body.dark-theme .card-footer,
+body.dark-theme .list-group-item,
+body.dark-theme .table,
+body.dark-theme .table th,
+body.dark-theme .table td {
+  color: var(--text-main);
+}
+
+body.dark-theme .text-dark {
+  color: var(--text-main) !important;
+}
+
+body.dark-theme [style*="#212529"],
+body.dark-theme [style*="#999"] {
+  color: var(--text-secondary) !important;
+}
+
+body.dark-theme .btn-close {
+  filter: invert(1);
+  opacity: 0.8;
+}
+
+body.dark-theme a.asc:after {
+  border-bottom-color: var(--text-main);
+}
+
+body.dark-theme a.desc:after {
+  border-top-color: var(--text-main);
+}
+
+body.dark-theme #quest-update,
+body.dark-theme #quest-create {
+  color: var(--text-main);
+}
+
+body.dark-theme #quest-update input,
+body.dark-theme #quest-create input,
+body.dark-theme #quest-update textarea,
+body.dark-theme #quest-create textarea,
+body.dark-theme #quest-update select,
+body.dark-theme #quest-create select {
+  background: #334155;
+  color: #F1F5F9;
+  border-color: #475569;
+}
+
+body.dark-theme #quest-update label,
+body.dark-theme #quest-create label {
+  color: #CBD5E1;
+}

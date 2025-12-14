@@ -7,26 +7,32 @@ use yii\helpers\Url;
 /** @var $questForm app\models\forms\QuestForm */
 /** @var $stations app\models\QuestStations[] */
 
-$this->title = 'Редактирование: ' . $quest->name;
+$this->title = 'Questable - Редактирование ' . $quest->name;
 
-// URL для самого квеста
 $questUrl = Url::to(['quest/view', 'id' => $quest->id], true);
 
-// Подключаем ресурсы
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-// Используем вашу библиотеку qrcodejs
-$this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js', ['position' => \yii\web\View::POS_HEAD]);
+$this->registerJsFile(
+    'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
+    ['position' => \yii\web\View::POS_HEAD]
+);
 ?>
-<div class="container py-4">
+
+<div class="container py-4 quest-update">
+
+    <!-- HEADER -->
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-        <h2 class="h3 mb-0 fw-bold">Конструктор: <?= Html::encode($quest->name) ?></h2>
+        <h2 class="h3 mb-0 fw-bold">
+            Конструктор: <?= Html::encode($quest->name) ?>
+        </h2>
 
         <div class="header-actions">
             <a href="<?= Url::to(['index']) ?>" class="btn-nice btn-nice-secondary">
                 <i class="fas fa-arrow-left"></i> Назад
             </a>
 
-            <button type="button" class="btn-nice btn-nice-info show-qr-btn"
+            <button type="button"
+                    class="btn-nice btn-nice-info show-qr-btn"
                     data-url="<?= Html::encode($questUrl) ?>"
                     data-title="Квест: <?= Html::encode($quest->name) ?>"
                     data-filename="quest-<?= $quest->id ?>">
@@ -42,68 +48,70 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrc
         </div>
     </div>
 
-    <!-- Основные настройки -->
-    <div class="card mb-4 shadow-sm" style="border-radius: 12px; border: 1px solid #dee2e6; overflow: hidden;">
-        <div class="card-header bg-white border-bottom">
+    <!-- ОСНОВНЫЕ НАСТРОЙКИ -->
+    <div class="card mb-4">
+        <div class="card-header">
             <h5 class="mb-0 fw-bold">Основные настройки</h5>
         </div>
+
         <div class="card-body p-4">
             <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <?= $form->field($questForm, 'name')->textInput(['class' => 'form-control'])->label('Название') ?>
+                    <?= $form->field($questForm, 'name')->textInput()->label('Название') ?>
                 </div>
+
                 <div class="col-md-6 mb-3">
-                    <?= $form->field($questForm, 'coverFile')->fileInput(['class' => 'form-control'])->label('Сменить обложку') ?>
+                    <?= $form->field($questForm, 'coverFile')->fileInput()->label('Сменить обложку') ?>
                 </div>
             </div>
-            <?= $form->field($questForm, 'description')->textarea(['rows' => 2, 'class' => 'form-control'])->label('Описание') ?>
+
+            <?= $form->field($questForm, 'description')
+                ->textarea(['rows' => 2])
+                ->label('Описание') ?>
+
             <div class="mt-4">
-                <?= Html::submitButton('<i class="fas fa-save"></i> Сохранить изменения', ['class' => 'btn-nice btn-nice-primary']) ?>
+                <?= Html::submitButton(
+                    '<i class="fas fa-save"></i> Сохранить изменения',
+                    ['class' => 'btn-nice btn-nice-primary']
+                ) ?>
             </div>
+
             <?php ActiveForm::end(); ?>
         </div>
     </div>
 
-    <!-- Список станций -->
-    <div class="card shadow-sm" style="border-radius: 12px; border: 1px solid #dee2e6; overflow: hidden;">
-        <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom p-3">
+    <!-- СТАНЦИИ -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center p-3">
             <h5 class="mb-0 fw-bold">Станции</h5>
-            <button class="btn-nice btn-nice-add" id="add-station-btn" data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id]) ?>">
+
+            <button class="btn-nice btn-nice-add"
+                    id="add-station-btn"
+                    data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id]) ?>">
                 <i class="fas fa-plus"></i> Добавить станцию
             </button>
         </div>
 
         <div class="list-group list-group-flush">
             <?php if (empty($stations)): ?>
-                <div class="list-group-item text-center text-muted py-5 border-0">
-                    <div style="width: 80px; height: 80px; background: #f8f9fa; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                        <i class="fas fa-map-marker-alt fa-2x text-secondary"></i>
-                    </div>
-                    <p>В этом квесте пока нет станций.</p>
+                <div class="list-group-item text-center py-5">
+                    <p class="text-muted">В этом квесте пока нет станций.</p>
                 </div>
             <?php else: ?>
                 <?php foreach ($stations as $station): ?>
-                    <?php
-                    $stationUrl = Url::to(['game/visit', 'qr' => $station->qr_identifier], true);
-                    ?>
-                    <div class="list-group-item d-flex justify-content-between align-items-center py-3 border-bottom-0 border-top">
-                        <div class="ms-2 me-auto">
+                    <?php $stationUrl = Url::to(['game/visit', 'qr' => $station->qr_identifier], true); ?>
+                    <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                        <div class="me-auto">
                             <div class="fw-bold fs-5">
                                 <?= Html::encode($station->name) ?>
-                                <?php
-                                $badges = [
-                                        'info' => ['text' => 'Инфо', 'class' => 'bg-secondary text-white'],
-                                        'quiz' => ['text' => 'Квиз', 'class' => 'bg-dark text-white'],
-                                        'curator_check' => ['text' => 'Куратор', 'class' => 'bg-warning text-dark'],
-                                ];
-                                $badge = $badges[$station->type] ?? ['text' => $station->type, 'class' => 'bg-light text-dark border'];
-                                ?>
-                                <span class="badge <?= $badge['class'] ?> ms-2 rounded-pill fw-normal"><?= $badge['text'] ?></span>
                             </div>
-                            <?php if($station->type == 'quiz' && $station->options): ?>
-                                <small class="text-muted d-block mt-1">
-                                    <i class="fas fa-check-circle me-1"></i> Ответ: <?= Html::encode(json_decode($station->options, true)['correct_answer'] ?? '-') ?>
+
+                            <?php if ($station->type === 'quiz' && $station->options): ?>
+                                <small class="text-muted">
+                                    Ответ:
+                                    <?= Html::encode(json_decode($station->options, true)['correct_answer'] ?? '-') ?>
                                 </small>
                             <?php endif; ?>
                         </div>
@@ -112,22 +120,20 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrc
                             <button class="btn-icon-action qr show-qr-btn"
                                     data-url="<?= Html::encode($stationUrl) ?>"
                                     data-title="Станция: <?= Html::encode($station->name) ?>"
-                                    data-filename="station-<?= $station->qr_identifier ?>"
-                                    title="QR код станции">
-                                <i class="fas fa-qrcode fa-sm"></i>
+                                    data-filename="station-<?= $station->qr_identifier ?>">
+                                <i class="fas fa-qrcode"></i>
                             </button>
 
                             <button class="btn-icon-action edit-station-btn"
-                                    data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id, 'id' => $station->id]) ?>"
-                                    title="Редактировать">
-                                <i class="fas fa-pen fa-sm"></i>
+                                    data-url="<?= Url::to(['save-station', 'quest_id' => $quest->id, 'id' => $station->id]) ?>">
+                                <i class="fas fa-pen"></i>
                             </button>
+
                             <a href="<?= Url::to(['delete-station', 'id' => $station->id]) ?>"
                                class="btn-icon-action delete"
                                data-confirm="Удалить станцию?"
-                               data-method="post"
-                               title="Удалить">
-                                <i class="fas fa-trash fa-sm"></i>
+                               data-method="post">
+                                <i class="fas fa-trash"></i>
                             </a>
                         </div>
                     </div>
@@ -135,55 +141,65 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrc
             <?php endif; ?>
         </div>
     </div>
+
 </div>
 
-<!-- Модальное окно для станций (Edit) -->
-<div class="modal fade" id="station-modal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 12px;">
-            <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold">Редактирование станции</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body" id="station-modal-body"></div>
-        </div>
-    </div>
-</div>
-
-<!-- Модальное окно для QR кода -->
-<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+<!-- =========================
+     QR MODAL
+     ========================= -->
+<div class="modal fade" id="qrCodeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="border-radius: 12px;">
-            <div class="modal-header">
-                <h5 class="modal-title fw-bold" id="qrCodeModalLabel">QR код</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center">
-                <p class="text-muted mb-3">Отсканируйте код для перехода</p>
+        <div class="modal-content qr-modal">
 
-                <!-- Контейнер для QR, библиотека qrcodejs сама создаст внутри img или canvas -->
-                <div id="qrcode" class="mb-3 d-flex justify-content-center align-items-center" style="min-height: 256px;"></div>
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="qrCodeModalLabel">QR код</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body text-center pt-2">
+                <div class="qr-wrapper mb-3">
+                    <div id="qrcode"></div>
+                </div>
+
+                <input type="hidden" id="qrFilename">
 
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" id="questUrlInput" readonly>
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyUrl(this)">
+                    <input type="text"
+                           id="questUrlInput"
+                           class="form-control text-center"
+                           readonly>
+                    <button class="btn btn-outline-secondary"
+                            onclick="copyUrl(this)">
                         <i class="fas fa-copy"></i>
                     </button>
                 </div>
 
-                <input type="hidden" id="qrFilename" value="qrcode">
-
-                <button class="btn btn-success" onclick="downloadQR()">
-                    <i class="fas fa-download"></i> Скачать PNG
+                <button class="btn btn-success w-100"
+                        onclick="downloadQR()">
+                    <i class="fas fa-download me-2"></i> Скачать QR
                 </button>
             </div>
+
         </div>
     </div>
 </div>
 
-<?php
-$js = <<<JS
-    
-JS;
-$this->registerJs($js);
-?>
+<!-- =========================
+     STATION MODAL
+     ========================= -->
+<div class="modal fade" id="station-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content station-modal">
+
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold">Станция</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="station-modal-body">
+                <!-- AJAX CONTENT -->
+            </div>
+
+        </div>
+    </div>
+</div>

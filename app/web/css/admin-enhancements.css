@@ -164,3 +164,13 @@ hr {
     }
 }
 
+.admin-default-index .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.admin-default-index .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.admin-default-index .card-body h2 {
+    font-weight: bold;
+}
