@@ -6,7 +6,10 @@ use yii\helpers\Markdown;
 /** @var $participant app\models\QuestParticipants */
 /** @var $progress app\models\StationProgress|null */
 /** @var $questProgress array */
+/** @var $isLastStation bool */
+
 $this->title = 'Questable - ' . $station->name;
+
 $isCompleted = $progress && $progress->isStatusCompleted();
 $quizData = [];
 $answersList = [];
@@ -106,6 +109,19 @@ if ($station->type === 'quiz' && !empty($station->options)) {
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
+
+            <div class="text-center mt-4">
+                <?php if ($isLastStation): ?>
+                    <a href="<?= Url::to(['game/completion', 'quest_id' => $station->quest_id]) ?>" class="btn btn-success btn-lg fw-bold">
+                        Завершить квест
+                    </a>
+                <?php else: ?>
+                    <a href="<?= Url::to(['game/progress', 'quest_id' => $station->quest_id]) ?>" class="btn btn-primary btn-lg fw-bold">
+                        Далее
+                    </a>
+                <?php endif; ?>
+            </div>
+
         </div>
     </div>
     <div class="text-center mt-4">

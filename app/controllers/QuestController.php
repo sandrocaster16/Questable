@@ -2,6 +2,8 @@
 
 namespace app\controllers;
 
+use app\core\services\QuestProgressService;
+use app\models\QuestParticipants;
 use Yii;
 use yii\web\Controller;
 use yii\web\UploadedFile;
@@ -45,7 +47,6 @@ class QuestController extends Controller
             $quest = new Quests();
 
             if ($form->save($quest)) {
-                Yii::$app->session->setFlash('success', 'Квест создан! Теперь добавьте станции.');
                 return $this->redirect(['update', 'id' => $quest->id]);
             }
         }
@@ -68,7 +69,6 @@ class QuestController extends Controller
         if ($questForm->load(Yii::$app->request->post())) {
             $questForm->coverFile = UploadedFile::getInstance($questForm, 'coverFile');
             if ($questForm->save($quest)) {
-                Yii::$app->session->setFlash('success', 'Основные настройки сохранены');
                 return $this->refresh();
             }
         }
@@ -149,6 +149,57 @@ class QuestController extends Controller
         return $this->render('statistics', [
             'quest' => $quest,
             'statistics' => $statistics,
+        ]);
+    }
+
+    /**
+     * Просмотр квеста
+     * @param int $id
+     * @return string
+     * @throws NotFoundHttpException
+     */
+    public function actionView($id)
+    {
+        $quest = Quests::find()
+            ->where(['id' => $id])
+            ->andWhere(['delete_at' => null])
+            ->one();
+
+        if (!$quest) {
+            throw new NotFoundHttpException('Квест не найден.');
+        }
+
+        // Получаем статистику квеста
+        $stationsCount = QuestStations::find()
+            ->where(['quest_id' => $quest->id])
+            ->andWhere(['deleted_at' => null])
+            ->count();
+
+        $participantsCount = QuestParticipants::find()
+            ->where(['quest_id' => $quest->id])
+            ->andWhere(['role' => QuestParticipants::ROLE_PLAYER])
+            ->count();
+
+        // Проверяем, участвует ли текущий пользователь в квесте
+        $currentParticipant = null;
+        $questProgress = null;
+        if (!Yii::$app->user->isGuest) {
+            $currentParticipant = QuestParticipants::findOne([
+                'user_id' => Yii::$app->user->id,
+                'quest_id' => $quest->id
+            ]);
+
+            if ($currentParticipant) {
+                $questProgress = (new QuestProgressService())->getParticipantProgress($currentParticipant);
+            }
+        }
+
+        return $this->render('quest-view', [
+            'quest' => $quest,
+            'stationsCount' => $stationsCount,
+            'participantsCount' => $participantsCount,
+            'currentParticipant' => $currentParticipant,
+            'questProgress' => $questProgress,
         ]);
     }
 

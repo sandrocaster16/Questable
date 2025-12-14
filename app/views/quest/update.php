@@ -9,7 +9,8 @@ use yii\helpers\Url;
 
 $this->title = 'Questable - Редактирование ' . $quest->name;
 
-$questUrl = Url::to(['quest/view', 'id' => $quest->id], true);
+// URL для самого квеста
+$questUrl = Url::to(['view', 'id' => $quest->id], true);
 
 $this->registerCssFile('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 $this->registerJsFile(

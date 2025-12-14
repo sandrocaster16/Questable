@@ -20,7 +20,8 @@ $this->title = 'Questable - Профиль';
                 </div>
                 <div class="form-group">
                     <label>Никнейм</label>
-                    <input type="text" name="nickname" value="<?= Html::encode(Yii::$app->user->identity->username) ?>" class="input-field">
+                    <!-- name должен быть ProfileForm[nickname] -->
+                    <input type="text" name="ProfileForm[nickname]" value="<?= Html::encode($model->nickname) ?>" class="input-field">
                 </div>
                 <div class="form-group">
                     <label>Ваш ID</label>
