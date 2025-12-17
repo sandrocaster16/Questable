@@ -14,7 +14,7 @@ use app\core\services\QuestProgressService;
 
 class GameController extends Controller
 {
-    public function actionVisit($qr)
+    public function actionPlay($qr)
     {
         $station = QuestStations::find()
             ->where(['qr_identifier' => $qr])
@@ -26,7 +26,7 @@ class GameController extends Controller
         }
 
         if (Yii::$app->user->isGuest) {
-            Yii::$app->user->returnUrl = ['game/visit', 'qr' => $qr];
+            Yii::$app->user->returnUrl = ['game/play', 'qr' => $qr];
             return $this->redirect(['site/login']);
         }
 
@@ -103,7 +103,7 @@ class GameController extends Controller
         }
 
         if ($participant->hasCompletedStation($station->id)) {
-            return $this->redirect(['visit', 'qr' => $station->qr_identifier]);
+            return $this->redirect(['play', 'qr' => $station->qr_identifier]);
         }
 
         $options = json_decode($station->options, true);
@@ -116,7 +116,7 @@ class GameController extends Controller
             
             if ($progress) {
                 if ($participant->isQuestCompleted()) {
-                    Yii::$app->session->setFlash('success', 'Верно! +10 баллов. Поздравляем! Квест завершен!');
+                    Yii::$app->session->setFlash('success', 'Верно! +10 баллов. Поздравляем! Квест завершен!', true);
                     return $this->redirect(['completion', 'quest_id' => $station->quest_id]);
                 } else {
                     Yii::$app->session->setFlash('success', 'Верно! +10 баллов.');
@@ -126,7 +126,7 @@ class GameController extends Controller
             Yii::$app->session->setFlash('error', 'Ошибка! Попробуйте еще раз.');
         }
 
-        return $this->redirect(['visit', 'qr' => $station->qr_identifier]);
+        return $this->redirect(['play', 'qr' => $station->qr_identifier]);
     }
     /**
      * Подтверждение прохождения станции куратором

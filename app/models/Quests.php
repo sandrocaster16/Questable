@@ -22,8 +22,6 @@ use Yii;
  */
 class Quests extends \yii\db\ActiveRecord
 {
-
-
     /**
      * {@inheritdoc}
      */

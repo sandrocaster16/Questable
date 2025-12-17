@@ -11,12 +11,13 @@
 
 <div class="container">
     <!-- Hero Block -->
-    <div class="hero">
+    <div class="info-item">
         <h1 style="font-size: 36px; margin-bottom: 10px;">Добро пожаловать в Questable</h1>
         <p style="font-size: 18px; opacity: 0.9;">
             Исследуйте город по-новому. Создавайте свои маршруты или проходите чужие.
         </p>
     </div>
+    <br>
 
     <!-- Инфо карточки -->
     <div class="info-cards">

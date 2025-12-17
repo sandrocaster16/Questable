@@ -29,7 +29,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
     <?php $this->beginBody() ?>
 
-    <?= Alert::widget() ?>
+<!--    --><?php //= Alert::widget() ?>
     <?= $content ?>
 
     <?php $this->endBody() ?>

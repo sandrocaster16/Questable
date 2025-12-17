@@ -1,4 +1,6 @@
 <?php
+
+use app\models\enum\SystemLogType;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii\helpers\Url;
@@ -109,6 +111,34 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrc
                         </div>
 
                         <div class="d-flex gap-2">
+                            <?php if ($station->type === 'curator_check'): ?>
+                                <?php
+                                $log = \app\models\SystemLog::find()
+                                        ->where(['type' => SystemLogType::StationAdminRegistration->value])
+                                        ->andWhere(['like', 'message', '"station_id":'.$station->id])
+                                        ->one();
+
+                                $token = null;
+                                if ($log) {
+                                    $data = json_decode($log->message, true);
+                                    if (!($data['is_used'] ?? true)) {
+                                        $token = $data['token'];
+                                    }
+                                }
+                                ?>
+
+                                <?php if ($token): ?>
+                                    <button class="btn-icon-action"
+                                            onclick="copyToClipboard('<?= Url::to([
+                                                    'station-admin/claim',
+                                                    'token' => $token
+                                            ], true) ?>')"
+                                            title="Скопировать ссылку администратора">
+                                        <i class="fas fa-user-shield"></i>
+                                    </button>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
                             <button class="btn-icon-action qr show-qr-btn"
                                     data-url="<?= Html::encode($stationUrl) ?>"
                                     data-title="Станция: <?= Html::encode($station->name) ?>"
@@ -181,9 +211,10 @@ $this->registerJsFile('https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrc
     </div>
 </div>
 
-<?php
-$js = <<<JS
-    
-JS;
-$this->registerJs($js);
-?>
+<script>
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Ссылка скопирована');
+        });
+    }
+</script>

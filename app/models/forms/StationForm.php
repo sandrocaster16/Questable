@@ -2,6 +2,8 @@
 
 namespace app\models\forms;
 
+use app\models\enum\SystemLogType;
+use app\models\SystemLog;
 use Yii;
 use yii\base\Model;
 use app\models\QuestStations;
@@ -75,9 +77,27 @@ class StationForm extends Model
         $station->type = $this->type;
         $station->content = $this->content;
 
-        if ($station->isNewRecord) {
-            $station->qr_identifier = Yii::$app->security->generateRandomString(12);
+        $isNew = $station->isNewRecord;
+
+        if (!$station->save()) {
+            return false;
         }
+
+        if ($isNew && $station->type === QuestStations::TYPE_CURATOR_CHECK) {
+            $token = Yii::$app->security->generateRandomString(32);
+
+            $log = new SystemLog();
+            $log->type = SystemLogType::StationAdminRegistration->value;
+            $log->message = json_encode([
+                'token' => $token,
+                'station_id' => $station->id,
+                'quest_id' => $station->quest_id,
+                'is_used' => false,
+            ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+
+            $log->save(false);
+        }
+
 
         if ($this->type === QuestStations::TYPE_QUIZ) {
             $answersArray = array_filter(array_map('trim', explode("\n", $this->answers_raw)));

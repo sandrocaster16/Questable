@@ -137,7 +137,7 @@ class SiteController extends Controller
             $nextStation = $progressService->getNextAvailableStation($participant);
 
             if ($nextStation) {
-                return $this->redirect(['game/visit', 'qr' => $nextStation->qr_identifier]);
+                return $this->redirect(['game/play', 'qr' => $nextStation->qr_identifier]);
             } else {
                 return $this->redirect(['game/progress', 'quest_id' => $quest->id]);
             }
@@ -162,7 +162,7 @@ class SiteController extends Controller
                 ->one();
 
             if ($firstStation) {
-                return $this->redirect(['game/visit', 'qr' => $firstStation->qr_identifier]);
+                return $this->redirect(['game/play', 'qr' => $firstStation->qr_identifier]);
             } else {
                 return $this->redirect(['site/view', 'id' => $id]);
             }
