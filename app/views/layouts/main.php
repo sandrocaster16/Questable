@@ -20,14 +20,15 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <?php $this->head() ?>
     </head>
     <body class="<?= Yii::$app->controller->id . '-' . Yii::$app->controller->action->id ?>">
-    
+
     <?php include 'header.php'; ?>
-    
+
     <?php $this->beginBody() ?>
-    
-    <?= Alert::widget() ?>
+
+    <!-- <?= Alert::widget() ?> -->
+
     <?= $content ?>
-    
+
     <?php $this->endBody() ?>
     </body>
     </html>

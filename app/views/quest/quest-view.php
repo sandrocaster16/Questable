@@ -118,7 +118,7 @@ $this->title = 'Questable - ' . Html::encode($quest->name);
                 </div>
             <?php else: ?>
                 <?php if ($questProgress && $questProgress['next_station']): ?>
-                    <a href="<?= Url::to(['game/visit', 'qr' => $questProgress['next_station']->qr_identifier]) ?>"
+                    <a href="<?= Url::to(['game/play', 'qr' => $questProgress['next_station']->qr_identifier]) ?>"
                        class="btn btn-primary btn-large">
                         <i class="fas fa-play"></i> Продолжить квест
                     </a>

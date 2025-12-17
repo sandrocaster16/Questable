@@ -3,12 +3,14 @@ $this->title = 'Questable - О проекте';
 ?>
 <div class="container">
     <!-- Hero Block -->
+
     <div class="hero">
         <h1>Добро пожаловать в Questable</h1>
         <p>
             Исследуйте город по-новому. Создавайте свои маршруты или проходите чужие.
         </p>
     </div>
+
     <!-- Инфо карточки -->
     <div class="info-cards">
         <div class="info-item">
