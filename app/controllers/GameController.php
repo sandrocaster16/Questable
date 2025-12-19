@@ -86,7 +86,7 @@ class GameController extends Controller
         }
 
         $stationId = $request->post('station_id');
-        $userAnswer = trim($request->post('answer'));
+        $userAnswerIndex = $request->post('answer');
 
         $station = QuestStations::findOne($stationId);
         if (!$station) {
@@ -107,27 +107,52 @@ class GameController extends Controller
         }
 
         $options = json_decode($station->options, true);
-        $correctAnswer = $options['correct_answer'] ?? '';
+
+        if (
+            empty($options) ||
+            !isset($options['answers'], $options['correct_answers']) ||
+            !is_array($options['answers']) ||
+            !is_array($options['correct_answers'])
+        ) {
+            Yii::$app->session->setFlash('error', 'Некорректная конфигурация вопроса');
+            return $this->redirect(['play', 'qr' => $station->qr_identifier]);
+        }
+
+        $userAnswer = trim((string)$userAnswerIndex);
+
+        $correctAnswers = [];
+        foreach ($options['correct_answers'] as $index) {
+            if (isset($options['answers'][$index])) {
+                $correctAnswers[] = (string)$options['answers'][$index];
+            }
+        }
+
+        $isCorrect = in_array($userAnswer, $correctAnswers, true);
+
 
         $progressService = new QuestProgressService();
 
-        if ($userAnswer === $correctAnswer) {
+        if ($isCorrect) {
             $progress = $progressService->completeStation($participant, $station, 10);
-            
+
             if ($progress) {
                 if ($participant->isQuestCompleted()) {
-                    Yii::$app->session->setFlash('success', 'Верно! +10 баллов. Поздравляем! Квест завершен!', true);
+                    Yii::$app->session->setFlash(
+                        'success',
+                        'Верно! +10 баллов. Поздравляем! Квест завершен!'
+                    );
                     return $this->redirect(['completion', 'quest_id' => $station->quest_id]);
                 } else {
                     Yii::$app->session->setFlash('success', 'Верно! +10 баллов.');
                 }
             }
         } else {
-            Yii::$app->session->setFlash('error', 'Ошибка! Попробуйте еще раз.');
+            Yii::$app->session->setFlash('error', 'Неверный ответ. Попробуйте ещё раз.');
         }
 
         return $this->redirect(['play', 'qr' => $station->qr_identifier]);
     }
+
     /**
      * Подтверждение прохождения станции куратором
      * @param int $station_id
