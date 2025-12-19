@@ -16,8 +16,8 @@ class StationForm extends Model
     public $type;
     public $content;
 
-    public $answers_raw;
-    public $correct_answer;
+    public array $answers = [];
+    public array $correct_answers = [];
 
     public function rules()
     {
@@ -26,15 +26,20 @@ class StationForm extends Model
             [['content'], 'string'],
             [['id'], 'integer'],
 
-            [['answers_raw', 'correct_answer'], 'required', 'when' => function($model) {
-                return $model->type === QuestStations::TYPE_QUIZ;
-            }, 'whenClient' => "function (attribute, value) {
-                return $('#station-type-select').val() == 'quiz';
-            }"],
+            [['answers', 'correct_answers'], 'required',
+                'when' => fn($model) => $model->type === QuestStations::TYPE_QUIZ,
+                'whenClient' => "function () {
+                return $('#station-type-select').val() === 'quiz';
+            }"
+            ],
 
-            [['answers_raw', 'correct_answer'], 'string'],
+            ['answers', 'each', 'rule' => ['string']],
+            ['correct_answers', 'each', 'rule' => ['integer']],
+
+            ['correct_answers', 'validateCorrectAnswer'],
         ];
     }
+
 
     public function attributeLabels()
     {
@@ -55,12 +60,10 @@ class StationForm extends Model
         $this->type = $station->type;
         $this->content = $station->content;
 
-        if ($station->type === QuestStations::TYPE_QUIZ && !empty($station->options)) {
+        if ($station->type === QuestStations::TYPE_QUIZ && $station->options) {
             $options = json_decode($station->options, true);
-            if (isset($options['answers']) && is_array($options['answers'])) {
-                $this->answers_raw = implode("\n", $options['answers']);
-            }
-            $this->correct_answer = $options['correct_answer'] ?? '';
+            $this->answers = $options['answers'] ?? [];
+            $this->correct_answers = (array)($options['correct_answers'] ?? []);
         }
     }
 
@@ -77,13 +80,15 @@ class StationForm extends Model
         $station->type = $this->type;
         $station->content = $this->content;
 
-        $isNew = $station->isNewRecord;
+        if ($station->isNewRecord) {
+            $station->qr_identifier = Yii::$app->security->generateRandomString(32);
+        }
 
         if (!$station->save()) {
             return false;
         }
 
-        if ($isNew && $station->type === QuestStations::TYPE_CURATOR_CHECK) {
+        if ($station->type === QuestStations::TYPE_CURATOR_CHECK) {
             $token = Yii::$app->security->generateRandomString(32);
 
             $log = new SystemLog();
@@ -100,11 +105,9 @@ class StationForm extends Model
 
 
         if ($this->type === QuestStations::TYPE_QUIZ) {
-            $answersArray = array_filter(array_map('trim', explode("\n", $this->answers_raw)));
-
             $optionsData = [
-                'answers' => array_values($answersArray),
-                'correct_answer' => trim($this->correct_answer)
+                'answers' => array_values(array_filter($this->answers, fn($a) => trim($a) !== '')),
+                'correct_answers' => array_values($this->correct_answers),
             ];
 
             $station->options = json_encode($optionsData, JSON_UNESCAPED_UNICODE);
@@ -114,4 +117,24 @@ class StationForm extends Model
 
         return $station->save();
     }
+
+    public function validateCorrectAnswer()
+    {
+        if ($this->type !== QuestStations::TYPE_QUIZ) {
+            return;
+        }
+
+        if (empty($this->correct_answers)) {
+            $this->addError('correct_answers', 'Не выбран правильный ответ');
+            return;
+        }
+
+        foreach ($this->correct_answers as $index) {
+            if (!isset($this->answers[$index]) || trim($this->answers[$index]) === '') {
+                $this->addError('correct_answers', 'Выбран некорректный вариант ответа');
+                return;
+            }
+        }
+    }
+
 }

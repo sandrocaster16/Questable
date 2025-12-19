@@ -14,12 +14,12 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true])->label('Название') ?>
 
-    <?= $form->field($model, 'tags')->checkboxList([
-            //TODO
-    ], [
-            'itemOptions' => ['class' => 'form-check-input'],
-            'separator' => '<br>',
-    ])->label('Тэги') ?>
+<!--    --><?php //= $form->field($model, 'tags')->checkboxList([
+//            //TODO
+//    ], [
+//            'itemOptions' => ['class' => 'form-check-input'],
+//            'separator' => '<br>',
+//    ])->label('Тэги') ?>
 
     <div class="form-group mt-3">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

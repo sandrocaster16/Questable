@@ -1,13 +1,13 @@
 <?php
 
-use app\models\QuestsStations;
+use app\models\QuestStations;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
 use yii\grid\GridView;
 use yii\widgets\Pjax;
 /** @var yii\web\View $this */
-/** @var app\models\QuestsStationsSearch $searchModel */
+/** @var app\models\QuestStationsSearch $searchModel */
 /** @var yii\data\ActiveDataProvider $dataProvider */
 
 $this->title = 'Quests Stations';
@@ -58,11 +58,14 @@ $this->registerCssFile('@web/css/admin-enhancements.css');
             'id',
             'quest_id',
             'name',
+            'type',
+            'qr_identifier',
+            'options',
             'created_at',
             'deleted_at',
             [
                 'class' => ActionColumn::className(),
-                'urlCreator' => function ($action, QuestsStations $model, $key, $index, $column) {
+                'urlCreator' => function ($action, QuestStations $model, $key, $index, $column) {
                     return Url::toRoute([$action, 'id' => $model->id]);
                  }
             ],

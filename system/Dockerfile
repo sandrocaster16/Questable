@@ -6,3 +6,6 @@ RUN sed -i -e 's|/app/web|/app/app/web|g' /etc/apache2/sites-available/000-defau
 
 # Включаем mod_rewrite для красивых URL
 RUN a2enmod rewrite
+
+RUN pecl install xdebug \
+    && docker-php-ext-enable xdebug

@@ -2,20 +2,30 @@
 
 namespace app\controllers;
 
+use app\models\enum\SystemLogType;
+use app\models\QuestParticipants;
+use app\models\SystemLog;
 use Yii;
 use yii\captcha\CaptchaAction;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\ErrorAction;
+use yii\web\ForbiddenHttpException;
+use yii\web\NotFoundHttpException;
 
 class StationAdminController extends Controller
 {
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [['allow' => true, 'roles' => ['@']]],
+            ],
+        ];
+    }
     public function actionClaim(string $token)
     {
-        if (Yii::$app->user->isGuest) {
-            Yii::$app->user->returnUrl = Yii::$app->request->url;
-            return $this->redirect(['site/login']);
-        }
-
         $log = SystemLog::find()
             ->where(['type' => SystemLogType::StationAdminRegistration->value])
             ->andWhere(['like', 'message', '"token":"'.$token.'"'])
@@ -34,31 +44,6 @@ class StationAdminController extends Controller
         $stationId = $data['station_id'];
         $userId = Yii::$app->user->id;
 
-        /** 1. Проверка: пользователь уже админ другой станции */
-        $exists = QuestParticipants::find()
-            ->where([
-                'user_id' => $userId,
-                'role' => QuestParticipants::ROLE_VOLUNTEER,
-            ])
-            ->exists();
-
-        if ($exists) {
-            throw new ForbiddenHttpException('Вы уже являетесь администратором станции');
-        }
-
-        /** 2. Проверка: у станции уже есть админ */
-        $stationAdminExists = QuestParticipants::find()
-            ->where([
-                'quest_id' => $data['quest_id'],
-                'role' => QuestParticipants::ROLE_VOLUNTEER,
-            ])
-            ->exists();
-
-        if ($stationAdminExists) {
-            throw new ForbiddenHttpException('У станции уже есть администратор');
-        }
-
-        /** 3. Назначаем админа */
         $participant = new QuestParticipants();
         $participant->user_id = $userId;
         $participant->quest_id = $data['quest_id'];
@@ -70,7 +55,6 @@ class StationAdminController extends Controller
             throw new \RuntimeException('Ошибка назначения администратора');
         }
 
-        /** 4. Помечаем ссылку использованной */
         $data['is_used'] = true;
         $log->message = json_encode($data, JSON_UNESCAPED_UNICODE);
         $log->save(false);

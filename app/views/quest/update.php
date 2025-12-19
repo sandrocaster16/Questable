@@ -112,11 +112,27 @@ $this->registerJsFile(
                             </div>
 
                             <?php if ($station->type === 'quiz' && $station->options): ?>
-                                <small class="text-muted">
-                                    Ответ:
-                                    <?= Html::encode(json_decode($station->options, true)['correct_answer'] ?? '-') ?>
-                                </small>
+                                <?php
+                                $options = json_decode($station->options, true);
+                                $answers = $options['answers'] ?? [];
+                                $correct = array_map('intval', $options['correct_answers'] ?? []);
+                                ?>
+
+                                <?php if (!empty($answers)): ?>
+                                    <ul class="list-unstyled mt-2 mb-0 quiz-answers-preview">
+                                        <?php foreach ($answers as $i => $answer): ?>
+                                            <li class="d-flex align-items-center gap-2
+                                            <?= in_array($i, $correct, true) ? 'quiz-correct' : 'quiz-wrong' ?>">
+                                            <span class="quiz-icon">
+                                                <?= in_array($i, $correct, true) ? '✔' : '✖' ?>
+                                            </span>
+                                                <span><?= Html::encode($answer) ?></span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                <?php endif; ?>
                             <?php endif; ?>
+
                         </div>
 
                         <div class="d-flex gap-2">

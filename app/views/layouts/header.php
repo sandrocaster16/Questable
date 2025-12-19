@@ -14,8 +14,10 @@ use yii\helpers\Url;
         <li><a href="<?= Url::to(['/quest/index']) ?>"><i class="fas fa-map"></i> Мои квесты</a></li>
         <li><a href="<?= Url::to(['/site/info']) ?>"><i class="fas fa-info"></i> Информация</a></li>
 
-        <?php if (Yii::$app->user->identity->isAdmin()) : ?>
-        <li><a href="<?= Url::to(['/admin/default/index']) ?>"><i class="fas fa-admin"></i> Админ панель</a></li>
+        <?php if (Yii::$app->user->identity !== null) : ?>
+            <?php if (Yii::$app->user->identity->isAdmin()) : ?>
+            <li><a href="<?= Url::to(['/admin/default/index']) ?>"><i class="fas fa-admin"></i> Админ панель</a></li>
+            <?php endif; ?>
         <?php endif; ?>
     </ul>
     <div class="sidebar-footer">

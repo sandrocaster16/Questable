@@ -17,8 +17,6 @@ $config = [
     ],
     'modules' => [
         'admin' => ['class' => 'app\modules\admin\Module'],
-        'main' => ['class' => 'app\modules\main\Module'],
-        'tg_api' => [ 'class' => 'app\modules\tg_api\Module'],
     ],
     'components' => [
         'request' => [

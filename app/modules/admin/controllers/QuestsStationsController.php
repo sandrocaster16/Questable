@@ -2,14 +2,14 @@
 
 namespace app\modules\admin\controllers;
 
-use app\models\QuestsStations;
-use app\models\QuestsStationsSearch;
+use app\models\QuestStations;
+use app\models\QuestStationsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * QuestsStationsController implements the CRUD actions for QuestsStations model.
+ * QuestsStationsController implements the CRUD actions for QuestStations model.
  */
 class QuestsStationsController extends Controller
 {
@@ -32,13 +32,13 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Lists all QuestsStations models.
+     * Lists all QuestStations models.
      *
      * @return string
      */
     public function actionIndex()
     {
-        $searchModel = new QuestsStationsSearch();
+        $searchModel = new QuestStationsSearch();
         $dataProvider = $searchModel->search($this->request->queryParams);
 
         return $this->render('index', [
@@ -48,7 +48,7 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Displays a single QuestsStations model.
+     * Displays a single QuestStations model.
      * @param int $id ID
      * @return string
      * @throws NotFoundHttpException if the model cannot be found
@@ -61,13 +61,13 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Creates a new QuestsStations model.
+     * Creates a new QuestStations model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return string|\yii\web\Response
      */
     public function actionCreate()
     {
-        $model = new QuestsStations();
+        $model = new QuestStations();
 
         if ($this->request->isPost) {
             if ($model->load($this->request->post()) && $model->save()) {
@@ -83,7 +83,7 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Updates an existing QuestsStations model.
+     * Updates an existing QuestStations model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param int $id ID
      * @return string|\yii\web\Response
@@ -103,7 +103,7 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Deletes an existing QuestsStations model.
+     * Deletes an existing QuestStations model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param int $id ID
      * @return \yii\web\Response
@@ -117,15 +117,15 @@ class QuestsStationsController extends Controller
     }
 
     /**
-     * Finds the QuestsStations model based on its primary key value.
+     * Finds the QuestStations model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
-     * @return QuestsStations the loaded model
+     * @return QuestStations the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = QuestsStations::findOne(['id' => $id])) !== null) {
+        if (($model = QuestStations::findOne(['id' => $id])) !== null) {
             return $model;
         }
 
