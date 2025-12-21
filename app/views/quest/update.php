@@ -138,16 +138,27 @@ $this->registerJsFile(
                         <div class="d-flex gap-2">
                             <?php if ($station->type === 'curator_check'): ?>
                                 <?php
+                                // Ищем запись с токеном для этой станции (запись создания токена)
                                 $log = \app\models\SystemLog::find()
                                         ->where(['type' => SystemLogType::StationAdminRegistration->value])
                                         ->andWhere(['like', 'message', '"station_id":'.$station->id])
+                                        ->andWhere(['not like', 'message', '"action":"admin_registered"'])
                                         ->one();
 
                                 $token = null;
                                 if ($log) {
                                     $data = json_decode($log->message, true);
-                                    if (!($data['is_used'] ?? true)) {
-                                        $token = $data['token'];
+                                    if (isset($data['token'])) {
+                                        // Проверяем, не был ли токен уже использован (ищем запись о регистрации)
+                                        $usedLog = \app\models\SystemLog::find()
+                                                ->where(['type' => SystemLogType::StationAdminRegistration->value])
+                                                ->andWhere(['like', 'message', '"token":"'.$data['token'].'"'])
+                                                ->andWhere(['like', 'message', '"action":"admin_registered"'])
+                                                ->one();
+                                        
+                                        if (!$usedLog) {
+                                            $token = $data['token'];
+                                        }
                                     }
                                 }
                                 ?>

@@ -57,3 +57,4 @@ $this->title = 'Questable - Квест завершен: ' . Html::encode($quest
         </a>
     </div>
 </div>
+

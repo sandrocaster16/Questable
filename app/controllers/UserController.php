@@ -7,6 +7,7 @@ use app\models\QuestParticipants;
 use app\models\Quests;
 use app\models\Users;
 use Yii;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\UploadedFile;
 use yii\captcha\CaptchaAction;
@@ -14,27 +15,18 @@ use yii\web\ErrorAction;
 
 class UserController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function actions()
+    public function behaviors()
     {
         return [
-            'error' => [
-                'class' => ErrorAction::class,
-            ],
-            'captcha' => [
-                'class' => CaptchaAction::class,
-                'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [['allow' => true, 'roles' => ['@']]],
             ],
         ];
     }
+
     public function actionProfile()
     {
-        if (Yii::$app->user->isGuest) {
-            return $this->redirect(['auth/login']);
-        }
-
         $user = Users::find()->where(['id' => Yii::$app->user->identity->id])->one();
 
         $model = new ProfileForm($user);
