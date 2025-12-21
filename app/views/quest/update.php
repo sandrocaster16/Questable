@@ -104,7 +104,7 @@ $this->registerJsFile(
                 </div>
             <?php else: ?>
                 <?php foreach ($stations as $station): ?>
-                    <?php $stationUrl = Url::to(['game/visit', 'qr' => $station->qr_identifier], true); ?>
+                    <?php $stationUrl = Url::to(['game/play', 'qr' => $station->qr_identifier], true); ?>
                     <div class="list-group-item d-flex justify-content-between align-items-center py-3">
                         <div class="me-auto">
                             <div class="fw-bold fs-5">
