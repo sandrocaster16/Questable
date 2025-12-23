@@ -6,6 +6,8 @@ use Yii;
 use yii\web\Controller;
 use app\models\Users; // Используй имя модели, сгенерированное Gii (Users или User)
 use app\models\UserAuthentication; // Твоя модель для таблицы user_authentification
+use app\models\SystemLog;
+use app\models\enum\SystemLogType;
 
 class AuthController extends Controller
 {
@@ -22,6 +24,18 @@ class AuthController extends Controller
     // Logout
     public function actionLogout()
     {
+        if (!Yii::$app->user->isGuest) {
+            $log = new SystemLog();
+            $log->type = SystemLogType::UserLogout->value;
+            $log->message = json_encode([
+                'action' => 'user_logout',
+                'user_id' => Yii::$app->user->identity->id,
+                'username' => Yii::$app->user->identity->username ?? null,
+                'timestamp' => date('Y-m-d H:i:s'),
+            ], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+            $log->save(false);
+        }
+
         Yii::$app->user->logout();
         return $this->goHome();
     }

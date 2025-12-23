@@ -29,6 +29,11 @@ $this->title = 'Questable - Профиль';
                 </div>
                 <button class="btn" type="button" onclick="alert('Сохранено (демо)!')">Сохранить изменения</button>
             </form>
+            <?= Html::beginForm(['/auth/logout'], 'post', ['class' => 'logout-form']) ?>
+                <button class="btn" type="submit">
+                    <i class="fas fa-sign-out-alt"></i> Выйти из аккаунта
+                </button>
+            <?= Html::endForm() ?>
         </div>
         <!-- стата -->
         <div class="profile-box">
