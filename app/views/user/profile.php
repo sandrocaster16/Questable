@@ -9,26 +9,31 @@ $this->title = 'Questable - Профиль';
     <div class="profile-wrap">
         <!-- профиль -->
         <div class="profile-box">
-            <form action="" method="POST" enctype="multipart/form-data">
+            <?php if (Yii::$app->session->hasFlash('success')): ?>
+                <div class="alert alert-success"><?= Html::encode(Yii::$app->session->getFlash('success')) ?></div>
+            <?php elseif (Yii::$app->session->hasFlash('error')): ?>
+                <div class="alert alert-danger"><?= Html::encode(Yii::$app->session->getFlash('error')) ?></div>
+            <?php endif; ?>
+
+            <?= Html::beginForm('', 'post', ['enctype' => 'multipart/form-data']) ?>
                 <img src="<?= Html::encode(Yii::$app->user->identity->avatar_url) ?>" id="avatarPreview" class="big-avatar" alt="Avatar">
-               
+
                 <div class="form-group">
                     <label for="avatarInput">
                         <i class="fas fa-camera"></i> Загрузить новое фото
                     </label>
-                    <input type="file" id="avatarInput" accept="image/*">
+                    <input type="file" id="avatarInput" name="ProfileForm[avatar]" accept="image/*">
                 </div>
                 <div class="form-group">
                     <label>Никнейм</label>
-                    <!-- name должен быть ProfileForm[nickname] -->
-                    <input type="text" name="ProfileForm[nickname]" value="<?= Html::encode($model->nickname) ?>" class="input-field">
+                    <input type="text" name="ProfileForm[nickname]" value="<?= Html::encode($model->nickname) ?>" class="input-field" required>
                 </div>
                 <div class="form-group">
                     <label>Ваш ID</label>
                     <input type="text" value="#<?= Html::encode(Yii::$app->user->identity->id) ?>" class="input-field" disabled>
                 </div>
-                <button class="btn" type="button" onclick="alert('Сохранено (демо)!')">Сохранить изменения</button>
-            </form>
+                <button class="btn" type="submit">Сохранить изменения</button>
+            <?= Html::endForm() ?>
             <?= Html::beginForm(['/auth/logout'], 'post', ['class' => 'logout-form']) ?>
                 <button class="btn" type="submit">
                     <i class="fas fa-sign-out-alt"></i> Выйти из аккаунта
