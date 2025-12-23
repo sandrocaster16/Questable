@@ -5,6 +5,7 @@ namespace app\models\forms;
 use Yii;
 use yii\base\Model;
 use app\models\Quests;
+use yii\helpers\Html;
 use yii\web\UploadedFile;
 
 class QuestForm extends Model
@@ -19,7 +20,6 @@ class QuestForm extends Model
             [['name'], 'required'],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 255],
-            // Валидация картинки
             [['coverFile'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg', 'maxSize' => 1024 * 1024 * 5],
         ];
     }
@@ -30,8 +30,8 @@ class QuestForm extends Model
             return false;
         }
 
-        $quest->name = $this->name;
-        $quest->description = $this->description;
+        $quest->name = Html::encode($this->name);
+        $quest->description = Html::encode($this->description);
 
         if ($quest->isNewRecord) {
             $quest->creator_id = Yii::$app->user->id;
