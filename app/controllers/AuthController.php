@@ -111,7 +111,8 @@ class AuthController extends Controller
         // 4. Логин в Yii
         Yii::$app->user->login($user, 3600 * 24 * 30); // Запомнить на 30 дней
 
-        return $this->goHome();
+        $returnUrl = Yii::$app->user->getReturnUrl(Yii::$app->homeUrl);
+        return $this->redirect($returnUrl);
     }
 
     /**
