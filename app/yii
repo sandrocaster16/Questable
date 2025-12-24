@@ -13,6 +13,7 @@ require __DIR__ . '/vendor/autoload.php';
 // dirname(__DIR__) указывает на корень проекта '/app' внутри контейнера
 $dotenv = Dotenv\Dotenv::createImmutable(dirname(__DIR__));
 $dotenv->load();
+
 // =====================================
 
 require __DIR__ . '/vendor/yiisoft/yii2/Yii.php';
