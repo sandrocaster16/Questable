@@ -194,7 +194,7 @@ class QuestController extends Controller
             }
         }
 
-        return $this->render('quest-view', [
+        return $this->render('view', [
             'quest' => $quest,
             'stationsCount' => $stationsCount,
             'participantsCount' => $participantsCount,
