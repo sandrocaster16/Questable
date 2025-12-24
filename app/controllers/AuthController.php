@@ -2,7 +2,10 @@
 
 namespace app\controllers;
 
+use Exception;
+use Throwable;
 use Yii;
+use yii\db\Expression;
 use yii\web\Controller;
 use app\models\Users; // Используй имя модели, сгенерированное Gii (Users или User)
 use app\models\UserAuthentication; // Твоя модель для таблицы user_authentification
@@ -11,7 +14,6 @@ use app\models\enum\SystemLogType;
 
 class AuthController extends Controller
 {
-    // Страница входа
     public function actionLogin()
     {
         if (!Yii::$app->user->isGuest) {
@@ -21,7 +23,11 @@ class AuthController extends Controller
         return $this->render('login');
     }
 
-    // Logout
+    /**
+     * @throws Throwable
+     * @throws \yii\db\Exception
+     * @throws \JsonException
+     */
     public function actionLogout()
     {
         if (!Yii::$app->user->isGuest) {
@@ -40,7 +46,6 @@ class AuthController extends Controller
         return $this->goHome();
     }
 
-    // Callback от Telegram
     public function actionTgCallback()
     {
         $data = Yii::$app->request->get();
@@ -49,36 +54,29 @@ class AuthController extends Controller
             throw new \yii\web\BadRequestHttpException('Hash not found');
         }
 
-        // 1. Проверка валидности данных (Security check)
         if (!$this->checkTelegramAuthorization($data)) {
             throw new \yii\web\ForbiddenHttpException('Data is NOT from Telegram');
         }
 
-        // 2. Данные валидны, достаем инфо
         $tgId = $data['id'];
         $firstName = $data['first_name'];
-        $username = $data['username'] ?? $firstName; // Username может быть не указан
+        $username = $data['username'] ?? $firstName;
         $photoUrl = $data['photo_url'] ?? null;
 
-        // 3. Ищем пользователя в таблице user_authentification
         $auth = UserAuthentication::find()
             ->where(['source' => 'telegram', 'identifier' => (string)$tgId])
             ->one();
 
         if ($auth) {
-            // Пользователь уже есть -> Логиним
-            $user = Users::findOne($auth->user_id); // Или User::findOne...
+            $user = Users::findOne($auth->user_id);
 
-            // (Опционально) Обновим аватарку, если она изменилась
             if ($user && $photoUrl && $user->avatar_url !== $photoUrl) {
                 $user->avatar_url = $photoUrl;
                 $user->save(false);
             }
         } else {
-            // Пользователя нет -> Регистрируем
             $transaction = Yii::$app->db->beginTransaction();
             try {
-                // А. Создаем запись в users
                 $user = new Users();
                 $user->username = $username;
                 $user->avatar_url = $photoUrl;
@@ -89,7 +87,6 @@ class AuthController extends Controller
                     throw new \Exception('Ошибка создания пользователя');
                 }
 
-                // Б. Создаем запись в user_authentification
                 $newAuth = new UserAuthentication();
                 $newAuth->user_id = $user->id;
                 $newAuth->source = 'telegram';

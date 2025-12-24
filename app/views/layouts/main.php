@@ -21,7 +21,12 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     </head>
     <body class="<?= Yii::$app->controller->id . '-' . Yii::$app->controller->action->id ?>">
 
-    <?php include 'header.php'; ?>
+
+    <?php
+        if (!Yii::$app->user->isGuest) {
+            include 'header.php';
+        }
+    ?>
 
     <?php $this->beginBody() ?>
 

@@ -16,6 +16,10 @@ class GameController extends Controller
 {
     public function actionPlay($qr)
     {
+        if (Yii::$app->user->isGuest) {
+            return $this->redirect(['non-authorised', 'qr' => $qr]);
+        }
+
         $station = QuestStations::find()
             ->where(['qr_identifier' => $qr])
             ->andWhere(['deleted_at' => null])
@@ -273,6 +277,41 @@ class GameController extends Controller
             'quest' => $quest,
             'participant' => $participant,
             'progress' => $progress,
+        ]);
+    }
+
+    /**
+     * @throws NotFoundHttpException
+     */
+    public function actionNonAuthorised($qr)
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->redirect(['play', 'qr' => $qr]);
+        }
+
+        $station = QuestStations::find()
+            ->where(['qr_identifier' => $qr])
+            ->andWhere(['deleted_at' => null])
+            ->one();
+
+        if ($station === null) {
+            throw new NotFoundHttpException('Станция не найдена.');
+        }
+
+        $quest = Quests::find()
+            ->where(['id' => $station->quest_id])
+            ->andWhere(['delete_at' => null])
+            ->one();
+
+        if ($quest === null) {
+            throw new NotFoundHttpException('Квест не найден.');
+        }
+
+        Yii::$app->user->returnUrl = ['game/play', 'qr' => $qr];
+
+        return $this->render('non-authorised', [
+            'quest'   => $quest,
+            'station'=> $station,
         ]);
     }
 }

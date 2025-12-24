@@ -2,6 +2,7 @@
 
 namespace app\models;
 
+use app\models\query\UsersQuery;
 use Yii;
 use yii\web\IdentityInterface;
 
@@ -290,5 +291,15 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
     public function validateAuthKey($authKey)
     {
         return $this->getAuthKey() === $authKey;
+    }
+
+    public static function find()
+    {
+        return (new UsersQuery(get_called_class()))->notDeleted();
+    }
+
+    public static function findAllUsers(): UsersQuery
+    {
+        return (new UsersQuery(get_called_class()));
     }
 }
