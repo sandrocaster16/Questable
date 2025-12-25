@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Проверка сохраненной темы или системной предпочтения
     const savedTheme = localStorage.getItem('theme');
-    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const isDark = savedTheme === 'dark' || (!savedTheme && systemPrefersDark);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const isDark = savedTheme === 'light' || (!savedTheme && systemPrefersDark);
 
-    if (isDark) {
+    if (!isDark) {
         body.classList.add('dark-theme');
     }
     updateButtonUI(isDark);
