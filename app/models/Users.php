@@ -240,54 +240,31 @@ class Users extends \yii\db\ActiveRecord  implements IdentityInterface
         return $this->id === 1 || $this->isRoleAdmin() || $this->isRoleRoot();
     }
 
-    /**
-     * Проверка, является ли пользователь волонтером или выше
-     * @return bool
-     */
-    public function isVolunteerOrAbove()
+    public function isVolunteer()
     {
-        return $this->isAdmin() || $this->isRoleVolunteer();
+        return $this->isRoleVolunteer();
     }
 
-    /**
-     * Находит пользователя по ID.
-     * Добавили проверку deleted_at => null (Soft Delete)
-     */
     public static function findIdentity($id)
     {
         return static::findOne(['id' => $id, 'deleted_at' => null]);
     }
 
-    /**
-     * Находит пользователя по токену (нужно для API, пока возвращаем null)
-     */
     public static function findIdentityByAccessToken($token, $type = null)
     {
         return null;
     }
 
-    /**
-     * Возвращает ID пользователя
-     */
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * Возвращает ключ авторизации (для "Запомнить меня")
-     * Так как в твоей схеме БД нет поля auth_key, пока возвращаем null.
-     * Для безопасности в будущем лучше добавить колонку auth_key varchar(32).
-     */
     public function getAuthKey()
     {
-        // return $this->auth_key; // Если добавишь колонку в БД
         return null;
     }
 
-    /**
-     * Проверяет ключ авторизации
-     */
     public function validateAuthKey($authKey)
     {
         return $this->getAuthKey() === $authKey;
