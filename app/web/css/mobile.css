@@ -1,0 +1,150 @@
+@media (max-width: 768px) {
+  .col-md-3, .col-md-4, .col-md-6, .col-md-8, .col-md-12 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .col-sm-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .quest-card {
+    width: 100%;
+  }
+
+  .slider-btn {
+    width: 40px;
+  }
+
+  .sidebar {
+    width: 100%;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  .btn, .btn-large {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .table {
+    font-size: 0.8rem;
+  }
+
+  .card {
+    margin-bottom: 1rem;
+  }
+
+  .profile-wrap {
+    flex-direction: column;
+  }
+
+  .quest-stats {
+    flex-direction: column;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  .hero {
+    padding: 50px 20px;
+  }
+
+  .info-item {
+    padding: 30px 20px;
+  }
+
+  .big-avatar {
+    height: 120px;
+    width: 120px;
+  }
+
+  .fa-trophy {
+    font-size: 60px;
+  }
+}
+
+@media (max-width: 850px) {
+    :root{
+      --card-height: 300px;
+      --card-width: 220px;
+    }
+
+    .slider-wrapper {
+        width: var(--card-width);
+    }
+
+    .grid-container {
+        max-width: var(--card-width);
+    }
+
+    .card-img {
+      height: 120px;
+      width: 100%;
+    }
+}
+
+@media (min-width: 850px) and (max-width: 1200px) {
+    .slider-wrapper {
+        width: calc((var(--card-width) * 2) + var(--card-gap));
+    }
+
+    .grid-container {
+        max-width: calc((var(--card-width) * 2) + var(--card-gap));
+    }
+}
+
+@media (max-width: 650px) {
+    .header-wrapper {
+      height: 100px;
+      padding: 0 10px;
+      position: relative;
+    }
+
+    .header-img {
+      height: 80px;
+      width: 80px;
+    }
+
+    .user-info h3 {
+      font-size: 15px;
+    }
+
+    .user-info span {
+      font-size: 8px;
+    }
+
+    .logo-btn {
+      height: 80px;
+      width: 80px;
+    }
+
+    .user-section {
+      gap: 10px;
+    }
+}
